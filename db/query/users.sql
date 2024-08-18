@@ -12,5 +12,8 @@ INSERT INTO users (
 SELECT * FROM users
 WHERE username = $1 LIMIT 1;
 
--- name: ChangePassword :one
+-- name: ChangePassword :exec
 UPDATE users SET hashed_password = $2 WHERE username = $1 RETURNING *;
+
+-- name: DeleteUser :exec
+DELETE FROM users WHERE username = $1;

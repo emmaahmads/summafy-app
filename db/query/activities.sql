@@ -15,3 +15,6 @@ WHERE user = $1 AND id = (SELECT MAX(id) FROM activities WHERE user = $1) LIMIT 
 -- name: GetAllActivitiesForUser :many
 SELECT * FROM activities
 WHERE user = $1;
+
+-- name: GetAllActivities :many
+SELECT * FROM activities;

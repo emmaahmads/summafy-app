@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-const changePassword = `-- name: ChangePassword :one
+const changePassword = `-- name: ChangePassword :exec
 UPDATE users SET hashed_password = $2 WHERE username = $1 RETURNING username, hashed_password, full_name, email, created_at
 `
 
@@ -18,17 +18,9 @@ type ChangePasswordParams struct {
 	HashedPassword string `json:"hashed_password"`
 }
 
-func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) (User, error) {
-	row := q.db.QueryRow(ctx, changePassword, arg.Username, arg.HashedPassword)
-	var i User
-	err := row.Scan(
-		&i.Username,
-		&i.HashedPassword,
-		&i.FullName,
-		&i.Email,
-		&i.CreatedAt,
-	)
-	return i, err
+func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) error {
+	_, err := q.db.Exec(ctx, changePassword, arg.Username, arg.HashedPassword)
+	return err
 }
 
 const createUser = `-- name: CreateUser :one
@@ -65,6 +57,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users WHERE username = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, username string) error {
+	_, err := q.db.Exec(ctx, deleteUser, username)
+	return err
 }
 
 const getUser = `-- name: GetUser :one

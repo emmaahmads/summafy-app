@@ -46,6 +46,36 @@ func (q *Queries) CreateActivity(ctx context.Context, arg CreateActivityParams) 
 	return i, err
 }
 
+const getAllActivities = `-- name: GetAllActivities :many
+SELECT id, username, activity, created_at, document_id FROM activities
+`
+
+func (q *Queries) GetAllActivities(ctx context.Context) ([]Activity, error) {
+	rows, err := q.db.Query(ctx, getAllActivities)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Activity{}
+	for rows.Next() {
+		var i Activity
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.Activity,
+			&i.CreatedAt,
+			&i.DocumentID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAllActivitiesForUser = `-- name: GetAllActivitiesForUser :many
 SELECT id, username, activity, created_at, document_id FROM activities
 WHERE user = $1
