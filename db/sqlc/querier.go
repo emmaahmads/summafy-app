@@ -10,7 +10,7 @@ import (
 
 type Querier interface {
 	ChangePassword(ctx context.Context, arg ChangePasswordParams) (User, error)
-	CreateActivity(ctx context.Context, activity int64) (Activity, error)
+	CreateActivity(ctx context.Context, arg CreateActivityParams) (Activity, error)
 	CreateDocument(ctx context.Context, arg CreateDocumentParams) (Document, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetAllActivitiesForUser(ctx context.Context, dollar_1 interface{}) ([]Activity, error)

@@ -1,8 +1,11 @@
 -- name: CreateActivity :one
 INSERT INTO activities (
-  activity
+  username,
+  activity,
+  document_id,
+  created_at
  ) VALUES (
-  $1
+  $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetLastActivityForUser :one
