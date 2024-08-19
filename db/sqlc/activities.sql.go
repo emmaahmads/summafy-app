@@ -29,7 +29,7 @@ type CreateActivityParams struct {
 }
 
 func (q *Queries) CreateActivity(ctx context.Context, arg CreateActivityParams) (Activity, error) {
-	row := q.db.QueryRow(ctx, createActivity,
+	row := q.db.QueryRowContext(ctx, createActivity,
 		arg.Username,
 		arg.Activity,
 		arg.DocumentID,
@@ -51,7 +51,7 @@ SELECT id, username, activity, created_at, document_id FROM activities
 `
 
 func (q *Queries) GetAllActivities(ctx context.Context) ([]Activity, error) {
-	rows, err := q.db.Query(ctx, getAllActivities)
+	rows, err := q.db.QueryContext(ctx, getAllActivities)
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +69,9 @@ func (q *Queries) GetAllActivities(ctx context.Context) ([]Activity, error) {
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -82,7 +85,7 @@ WHERE user = $1
 `
 
 func (q *Queries) GetAllActivitiesForUser(ctx context.Context, dollar_1 interface{}) ([]Activity, error) {
-	rows, err := q.db.Query(ctx, getAllActivitiesForUser, dollar_1)
+	rows, err := q.db.QueryContext(ctx, getAllActivitiesForUser, dollar_1)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +104,9 @@ func (q *Queries) GetAllActivitiesForUser(ctx context.Context, dollar_1 interfac
 		}
 		items = append(items, i)
 	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -113,7 +119,7 @@ WHERE user = $1 AND id = (SELECT MAX(id) FROM activities WHERE user = $1) LIMIT 
 `
 
 func (q *Queries) GetLastActivityForUser(ctx context.Context, dollar_1 interface{}) (Activity, error) {
-	row := q.db.QueryRow(ctx, getLastActivityForUser, dollar_1)
+	row := q.db.QueryRowContext(ctx, getLastActivityForUser, dollar_1)
 	var i Activity
 	err := row.Scan(
 		&i.ID,

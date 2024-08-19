@@ -28,7 +28,7 @@ type CreateDocumentParams struct {
 }
 
 func (q *Queries) CreateDocument(ctx context.Context, arg CreateDocumentParams) (Document, error) {
-	row := q.db.QueryRow(ctx, createDocument,
+	row := q.db.QueryRowContext(ctx, createDocument,
 		arg.Username,
 		arg.IsPrivate,
 		arg.HasSummary,
@@ -52,7 +52,7 @@ WHERE username = $1
 `
 
 func (q *Queries) GetAllDocumentsByUser(ctx context.Context, username string) ([]Document, error) {
-	rows, err := q.db.Query(ctx, getAllDocumentsByUser, username)
+	rows, err := q.db.QueryContext(ctx, getAllDocumentsByUser, username)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +71,9 @@ func (q *Queries) GetAllDocumentsByUser(ctx context.Context, username string) ([
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -84,7 +87,7 @@ WHERE private = false
 `
 
 func (q *Queries) GetAllNonPrivateDocuments(ctx context.Context) ([]Document, error) {
-	rows, err := q.db.Query(ctx, getAllNonPrivateDocuments)
+	rows, err := q.db.QueryContext(ctx, getAllNonPrivateDocuments)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +107,9 @@ func (q *Queries) GetAllNonPrivateDocuments(ctx context.Context) ([]Document, er
 		}
 		items = append(items, i)
 	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -116,7 +122,7 @@ WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetDocument(ctx context.Context, id int64) (Document, error) {
-	row := q.db.QueryRow(ctx, getDocument, id)
+	row := q.db.QueryRowContext(ctx, getDocument, id)
 	var i Document
 	err := row.Scan(
 		&i.ID,
@@ -139,7 +145,7 @@ type UpdatePrivateDocumentParams struct {
 }
 
 func (q *Queries) UpdatePrivateDocument(ctx context.Context, arg UpdatePrivateDocumentParams) (Document, error) {
-	row := q.db.QueryRow(ctx, updatePrivateDocument, arg.ID, arg.HasSummary)
+	row := q.db.QueryRowContext(ctx, updatePrivateDocument, arg.ID, arg.HasSummary)
 	var i Document
 	err := row.Scan(
 		&i.ID,
@@ -162,7 +168,7 @@ type UpdateSummaryParams struct {
 }
 
 func (q *Queries) UpdateSummary(ctx context.Context, arg UpdateSummaryParams) (Document, error) {
-	row := q.db.QueryRow(ctx, updateSummary, arg.ID, arg.HasSummary)
+	row := q.db.QueryRowContext(ctx, updateSummary, arg.ID, arg.HasSummary)
 	var i Document
 	err := row.Scan(
 		&i.ID,

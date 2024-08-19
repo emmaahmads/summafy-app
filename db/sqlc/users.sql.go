@@ -19,7 +19,7 @@ type ChangePasswordParams struct {
 }
 
 func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) error {
-	_, err := q.db.Exec(ctx, changePassword, arg.Username, arg.HashedPassword)
+	_, err := q.db.ExecContext(ctx, changePassword, arg.Username, arg.HashedPassword)
 	return err
 }
 
@@ -42,7 +42,7 @@ type CreateUserParams struct {
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser,
+	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Username,
 		arg.HashedPassword,
 		arg.FullName,
@@ -64,7 +64,7 @@ DELETE FROM users WHERE username = $1
 `
 
 func (q *Queries) DeleteUser(ctx context.Context, username string) error {
-	_, err := q.db.Exec(ctx, deleteUser, username)
+	_, err := q.db.ExecContext(ctx, deleteUser, username)
 	return err
 }
 
@@ -74,7 +74,7 @@ WHERE username = $1 LIMIT 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
-	row := q.db.QueryRow(ctx, getUser, username)
+	row := q.db.QueryRowContext(ctx, getUser, username)
 	var i User
 	err := row.Scan(
 		&i.Username,
