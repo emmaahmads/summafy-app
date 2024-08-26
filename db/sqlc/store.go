@@ -6,6 +6,14 @@ import (
 	"fmt"
 )
 
+const (
+	Uploaded = iota
+	GeneratedSummary
+	Deleted
+	ChangeSummary
+	Downloaded
+)
+
 // Store provides all functions to execute db queries and transaction
 type Store struct {
 	db *sql.DB
@@ -41,7 +49,6 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 // NewDocumentTx creates a new document
 type NewDocumentParams struct {
-	Activity   int64  `json:"activity"`
 	Username   string `json:"username"`
 	IsPrivate  bool   `json:"is_private"`
 	HasSummary bool   `json:"has_summary"`
@@ -84,7 +91,83 @@ func (store *Store) NewDocumentTx(ctx context.Context, arg NewDocumentParams) (N
 		result.Activity, err = q.CreateActivity(ctx, CreateActivityParams{
 			Username:   arg.Username,
 			DocumentID: doc_id,
-			Activity:   arg.Activity,
+			Activity:   Uploaded,
+		})
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	return result, err
+}
+
+type DocDeleteParams struct {
+	Id       int64  `json:"id"`
+	Username string `json:"username"`
+}
+
+// DocDeleteTx deletes a document
+type DocDeleteResults struct {
+	Document Document `json:"document"`
+	Activity Activity `json:"activity"`
+}
+
+func (store *Store) DocDeleteTx(ctx context.Context, arg DocDeleteParams) (DocDeleteResults, error) {
+	var result DocDeleteResults
+	var err error
+	result.Document, _ = store.Queries.GetDocument(ctx, arg.Id)
+
+	err = store.execTx(ctx, func(q *Queries) error {
+		err = q.DeleteDocument(ctx, arg.Id)
+		if err != nil {
+			return err
+		}
+
+		result.Activity, err = q.CreateActivity(ctx, CreateActivityParams{
+			Username:   arg.Username,
+			DocumentID: arg.Id,
+			Activity:   Deleted,
+		})
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	return result, err
+}
+
+type ChangeSummaryTxParams struct {
+	Id       int64  `json:"id"`
+	Username string `json:"username"`
+	Summary  []byte `json:"summary"`
+}
+
+// DocDeleteTx deletes a document
+type ChangeSummaryResults struct {
+	Document Document `json:"document"`
+	Activity Activity `json:"activity"`
+}
+
+func (store *Store) ChangeSummaryTx(ctx context.Context, arg ChangeSummaryTxParams) (ChangeSummaryResults, error) {
+	var result ChangeSummaryResults
+	var err error
+	result.Document, _ = store.Queries.GetDocument(ctx, arg.Id)
+
+	err = store.execTx(ctx, func(q *Queries) error {
+		err = q.ChangeSummary(ctx, ChangeSummaryParams{
+			DocID:   arg.Id,
+			Summary: arg.Summary,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.Activity, err = q.CreateActivity(ctx, CreateActivityParams{
+			Username:   arg.Username,
+			DocumentID: arg.Id,
+			Activity:   ChangeSummary,
 		})
 		if err != nil {
 			return err

@@ -25,3 +25,6 @@ UPDATE document SET has_summary = $2 WHERE id = $1 RETURNING *;
 -- name: GetDocument :one
 SELECT * FROM document
 WHERE id = $1 LIMIT 1;
+
+-- name: DeleteDocument :exec
+DELETE FROM document WHERE id = $1;

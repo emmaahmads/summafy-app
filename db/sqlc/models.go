@@ -18,6 +18,7 @@ const (
 	UserActivityUploaded         UserActivity = "uploaded"
 	UserActivityGeneratedSummary UserActivity = "generated_summary"
 	UserActivityDeleted          UserActivity = "deleted"
+	UserActivityChangeSummary    UserActivity = "change_summary"
 	UserActivityDownloaded       UserActivity = "downloaded"
 )
 

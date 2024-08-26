@@ -5,6 +5,7 @@ CREATE TYPE "user_activity" AS ENUM (
   'uploaded',
   'generated_summary',
   'deleted',
+  'change_summary',
   'downloaded'
 );
 
@@ -56,7 +57,7 @@ ALTER TABLE "document" ADD FOREIGN KEY ("username") REFERENCES "users" ("usernam
 
 ALTER TABLE "activities" ADD FOREIGN KEY ("document_id") REFERENCES "document" ("id");
 
-ALTER TABLE "summary" ADD FOREIGN KEY ("doc_id") REFERENCES "document" ("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "summary" ADD FOREIGN KEY ("doc_id") REFERENCES "document" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
 -- +goose StatementEnd
