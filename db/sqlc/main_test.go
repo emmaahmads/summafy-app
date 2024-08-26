@@ -1,22 +1,22 @@
 package db
 
 import (
-	"context"
+	"database/sql"
 	"log"
 	"os"
 	"testing"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/lib/pq"
 )
 
 var testQueries *Queries
 
 func TestMain(m *testing.M) {
-	connPool, err := pgxpool.New(context.Background(), "postgres://emma:happy@localhost:5434/summafy?sslmode=disable")
+	conn, err := sql.Open("postgres", "postgresql://emma:happy@localhost:5434/summafy?sslmode=disable")
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	testQueries = New(connPool)
+	testQueries = New(conn)
 	os.Exit(m.Run())
 }
