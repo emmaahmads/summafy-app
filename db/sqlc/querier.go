@@ -16,7 +16,7 @@ type Querier interface {
 	CreateSummary(ctx context.Context, arg CreateSummaryParams) (Summary, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteDocument(ctx context.Context, id int64) error
-	DeleteSummary(ctx context.Context, summary []byte) error
+	DeleteSummary(ctx context.Context, docID int64) error
 	DeleteUser(ctx context.Context, username string) error
 	GetAllActivities(ctx context.Context) ([]Activity, error)
 	GetAllActivitiesForUser(ctx context.Context, dollar_1 interface{}) ([]Activity, error)

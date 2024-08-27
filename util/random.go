@@ -39,3 +39,11 @@ func RandomOwner() string {
 func RandomEmail() string {
 	return fmt.Sprintf("%s@email.com", RandomString(6))
 }
+
+func RandomActivity() int64 {
+	return int64(RandomInt(0, 4))
+}
+
+func RandomSummary() []byte {
+	return []byte(RandomString(40))
+}

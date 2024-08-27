@@ -1,6 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 DROP TYPE IF EXISTS "user_activity";
+
 CREATE TYPE "user_activity" AS ENUM (
   'uploaded',
   'generated_summary',
@@ -51,9 +52,9 @@ CREATE INDEX ON "summary" ("doc_id");
 
 CREATE UNIQUE INDEX "doc_summary" ON "summary" ("doc_id", "summary");
 
-ALTER TABLE "activities" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+ALTER TABLE "activities" ADD FOREIGN KEY ("username") REFERENCES "users" ("username") ON DELETE CASCADE;
 
-ALTER TABLE "document" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+ALTER TABLE "document" ADD FOREIGN KEY ("username") REFERENCES "users" ("username") ON DELETE CASCADE;
 
 ALTER TABLE "activities" ADD FOREIGN KEY ("document_id") REFERENCES "document" ("id");
 
@@ -64,10 +65,10 @@ ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("usernam
 
 -- +goose Down
 -- +goose StatementBegin
-/* DROP TABLE "sessions";
-DROP TABLE "users";
+DROP TYPE IF EXISTS "user_activity";
+DROP TABLE "sessions";
+DROP TABLE "summary";
 DROP TABLE "activities";
 DROP TABLE "document";
-DROP TYPE "user_activity";
-DROP TABLE "summary"; */
+DROP TABLE "users";
 -- +goose StatementEnd

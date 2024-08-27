@@ -20,7 +20,7 @@ WHERE private = false;
 UPDATE document SET has_summary = $2 WHERE id = $1 RETURNING *;
 
 -- name: UpdatePrivateDocument :one
-UPDATE document SET has_summary = $2 WHERE id = $1 RETURNING *;
+UPDATE document SET is_private = $2 WHERE id = $1 RETURNING *;
 
 -- name: GetDocument :one
 SELECT * FROM document

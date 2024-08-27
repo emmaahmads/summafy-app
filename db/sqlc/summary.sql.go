@@ -60,11 +60,11 @@ func (q *Queries) CreateSummary(ctx context.Context, arg CreateSummaryParams) (S
 }
 
 const deleteSummary = `-- name: DeleteSummary :exec
-DELETE FROM summary WHERE summary = $1
+DELETE FROM summary WHERE doc_id = $1
 `
 
-func (q *Queries) DeleteSummary(ctx context.Context, summary []byte) error {
-	_, err := q.db.ExecContext(ctx, deleteSummary, summary)
+func (q *Queries) DeleteSummary(ctx context.Context, docID int64) error {
+	_, err := q.db.ExecContext(ctx, deleteSummary, docID)
 	return err
 }
 

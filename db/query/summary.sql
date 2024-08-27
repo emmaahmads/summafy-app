@@ -16,4 +16,4 @@ WHERE doc_id IS NOT NULL AND doc_id = $1 LIMIT 1;
 UPDATE summary SET summary = $2 WHERE doc_id = $1 RETURNING *;
 
 -- name: DeleteSummary :exec
-DELETE FROM summary WHERE summary = $1;
+DELETE FROM summary WHERE doc_id = $1;

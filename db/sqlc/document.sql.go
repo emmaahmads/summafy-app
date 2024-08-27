@@ -145,16 +145,16 @@ func (q *Queries) GetDocument(ctx context.Context, id int64) (Document, error) {
 }
 
 const updatePrivateDocument = `-- name: UpdatePrivateDocument :one
-UPDATE document SET has_summary = $2 WHERE id = $1 RETURNING id, username, is_private, has_summary, file_name, created_at
+UPDATE document SET is_private = $2 WHERE id = $1 RETURNING id, username, is_private, has_summary, file_name, created_at
 `
 
 type UpdatePrivateDocumentParams struct {
-	ID         int64 `json:"id"`
-	HasSummary bool  `json:"has_summary"`
+	ID        int64 `json:"id"`
+	IsPrivate bool  `json:"is_private"`
 }
 
 func (q *Queries) UpdatePrivateDocument(ctx context.Context, arg UpdatePrivateDocumentParams) (Document, error) {
-	row := q.db.QueryRowContext(ctx, updatePrivateDocument, arg.ID, arg.HasSummary)
+	row := q.db.QueryRowContext(ctx, updatePrivateDocument, arg.ID, arg.IsPrivate)
 	var i Document
 	err := row.Scan(
 		&i.ID,
