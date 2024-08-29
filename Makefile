@@ -1,17 +1,15 @@
 include .env
 
-sqlccompile:
-	sqlc compile
-sqlcgen:
+sqlc:
 	sqlc generate
 migrateup:
-	goose $(GOOSE_DRIVER) $(GOOSE_DBSTRING) up
+	goose -dir db/migration $(GOOSE_DRIVER) $(GOOSE_DBSTRING) up
 migratedown:
-	goose $(GOOSE_DRIVER) $(GOOSE_DBSTRING) down
+	goose -dir db/migration $(GOOSE_DRIVER) $(GOOSE_DBSTRING) down
 test:
 	go test -v -cover -short ./...
 
 server:
 	go run main.go
 
-.PHONY: sqlccompile sqlcgen migrateup migratedown test server
+.PHONY: sqlc migrateup migratedown test server
