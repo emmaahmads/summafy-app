@@ -45,7 +45,9 @@ jobs:
         which goose
 
     - name: Run migrations
-      run: make migrateup
+      run: |
+        echo ${{ vars.GOOSE_DRIVER }}
+        goose -dir db/migration ${{ vars.GOOSE_DRIVER }} ${{ vars.GOOSE_DBSTRING }} up
 
     - name: Test
-      run: make test
+      run: go test -v -cover -short ./...
