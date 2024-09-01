@@ -11,14 +11,15 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-
+    environment: 
+      name: ci
     services:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: emma
-          POSTGRES_PASSWORD: happy
-          POSTGRES_DB: summafy
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5434:5432
         options: >-

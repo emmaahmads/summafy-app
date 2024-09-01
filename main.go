@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/emmaahmads/summafy/api"
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
 	_ "github.com/lib/pq"
@@ -20,6 +21,11 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	_ = db.NewStore(conn)
+	store := db.NewStore(conn)
+	server := api.NewServer(*store)
+	err = server.Start(config.ServerAddress + ":" + config.Port)
+	if err != nil {
+		log.Fatal("cannot start server:", err)
+	}
 
 }
