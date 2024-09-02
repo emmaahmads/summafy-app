@@ -8,7 +8,12 @@ import (
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
+
+func init() {
+	logrus.SetLevel(logrus.InfoLevel) // NEW
+}
 
 func main() {
 	config, err := util.LoadConfig(".")

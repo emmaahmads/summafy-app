@@ -17,11 +17,13 @@ func NewServer(store db.Store) *Server {
 		store: store,
 	}
 	r := gin.Default()
-
+	r.Use(gin.Logger())
 	r.LoadHTMLGlob("templates/*")
-
+	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/", server.HandlerLandingPage)
-	r.GET("/test", server.HandlerLandingPageTest)
+	r.GET("/upload", server.HandlerUploadPage)
+	r.GET("/view", server.HandlerViewPage)
+	r.POST("/upload", server.HandlerUploadDoc)
 
 	server.router = r
 	return server
