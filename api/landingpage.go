@@ -85,10 +85,14 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 }
 
 func (server *Server) UploadFileToS3(fileDir string, file *os.File) (string, error) {
-	sess, _ := session.NewSession(server.aws)
+	sess, err := session.NewSession(server.aws)
+
+	if err != nil {
+		return "", err
+	}
 
 	svc := s3.New(sess)
-	_, err := svc.PutObject(&s3.PutObjectInput{
+	_, err = svc.PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(server.s3_bucket),
 		Key:    aws.String(file.Name()),
 		Body:   file,

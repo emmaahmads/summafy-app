@@ -10,8 +10,10 @@ type Config struct {
 	DBUrl         string `mapstructure:"DB_URL"`
 	DBDriver      string `mapstructure:"DB_DRIVER"`
 	S3Bucket      string `mapstructure:"S3_BUCKET"`
-	Region        string `mapstructure:"REGION"`
-	Creds         string `mapstructure:"CREDS"`
+	Region        string `mapstructure:"AWS_REGION"`
+	Creds1        string `mapstructure:"AWS_CREDENTIALS_1"`
+	Creds2        string `mapstructure:"AWS_CREDENTIALS_2"`
+	Creds3        string `mapstructure:"AWS_CREDENTIALS_3"`
 }
 
 // LoadConfig reads configuration from file or environment variables.

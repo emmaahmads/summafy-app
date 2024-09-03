@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	db "github.com/emmaahmads/summafy/db/sqlc"
+	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,12 +17,13 @@ type Server struct {
 	// openai
 }
 
-func NewServer(store db.Store, aws_conf awsConfig) *Server {
+func NewServer(store db.Store, aws_conf *awsConfig) *Server {
+	util.MyLogger(util.MyFunc(), aws_conf.s3_bucket, aws_conf.region, aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2])
 	server := &Server{
 		store: store,
 		aws: &aws.Config{
-			Region:      &aws_conf.region,
-			Credentials: credentials.NewStaticCredentials(aws_conf.creds, "", ""),
+			Region:      aws.String(aws_conf.region),
+			Credentials: credentials.NewStaticCredentials(aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2]),
 		},
 		s3_bucket: aws_conf.s3_bucket,
 	}
