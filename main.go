@@ -27,7 +27,8 @@ func main() {
 	}
 
 	store := db.NewStore(conn)
-	server := api.NewServer(*store)
+	s3_bucket := config.S3Bucket
+	server := api.NewServer(*store, s3_bucket)
 	err = server.Start(config.ServerAddress + ":" + config.Port)
 	if err != nil {
 		log.Fatal("cannot start server:", err)

@@ -9,6 +9,9 @@ type Config struct {
 	Port          string `mapstructure:"PORT"`
 	DBUrl         string `mapstructure:"DB_URL"`
 	DBDriver      string `mapstructure:"DB_DRIVER"`
+	S3Bucket      string `mapstructure:"S3_BUCKET"`
+	Region        string `mapstructure:"REGION"`
+	Creds         string `mapstructure:"CREDS"`
 }
 
 // LoadConfig reads configuration from file or environment variables.

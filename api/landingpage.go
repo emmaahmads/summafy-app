@@ -3,8 +3,13 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type Link struct {
@@ -65,6 +70,33 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully"})
+	local_file, err := os.Open(dst)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	message, err := server.UploadFileToS3("./upload/", local_file)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": message})
 
+}
+
+func (server *Server) UploadFileToS3(fileDir string, file *os.File) (string, error) {
+	sess, _ := session.NewSession(server.aws)
+
+	svc := s3.New(sess)
+	_, err := svc.PutObject(&s3.PutObjectInput{
+		Bucket: aws.String(server.s3_bucket),
+		Key:    aws.String(file.Name()),
+		Body:   file,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return "https://emmaahmadsproject1.s3.amazonaws.com/" + file.Name(), nil
 }
