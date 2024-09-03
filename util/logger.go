@@ -7,14 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func MyLogger(f string, msg ...string) {
-
-	fmt.Fprintln(gin.DefaultWriter, "MyLogger: ", f, msg)
-}
-
-func MyFunc() string {
+func MyLogger(msg ...string) {
 	pc := make([]uintptr, 1)
 	runtime.Callers(2, pc)
-
-	return runtime.FuncForPC(pc[0]).Name()
+	fmt.Fprintln(gin.DefaultWriter, "MyLogger: ", runtime.FuncForPC(pc[0]).Name(), msg)
 }

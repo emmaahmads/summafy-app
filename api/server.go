@@ -18,7 +18,7 @@ type Server struct {
 }
 
 func NewServer(store db.Store, aws_conf *awsConfig) *Server {
-	util.MyLogger(util.MyFunc(), aws_conf.s3_bucket, aws_conf.region, aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2])
+	util.MyLogger(aws_conf.s3_bucket, aws_conf.region, aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2])
 	server := &Server{
 		store: store,
 		aws: &aws.Config{
