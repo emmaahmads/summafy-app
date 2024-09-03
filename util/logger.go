@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func MyLogger(msg ...string) {
+func MyGinLogger(msg ...string) {
 	pc := make([]uintptr, 1)
 	runtime.Callers(2, pc)
-	fmt.Fprintln(gin.DefaultWriter, "MyLogger: ", runtime.FuncForPC(pc[0]).Name(), msg)
+	fmt.Fprintln(gin.DefaultWriter, "MyGinLogger: ", runtime.FuncForPC(pc[0]).Name(), msg)
 }
