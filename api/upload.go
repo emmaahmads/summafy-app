@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
 )
@@ -41,16 +42,16 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		return
 	}
 
-	// start transaction of New Document
-	// _, err = server.store.NewDocumentTx(c, db.NewDocumentParams{
-	// 	Username:   "emma",
-	// 	IsPrivate:  false,
-	// 	HasSummary: true,
-	// 	FileName:   uploaded_file,
-	// 	Param1:     false,
-	// 	Param2:     false,
-	// 	Summary:    "no summary no summary no summary thank you",
-	// })
+	//start transaction of New Document
+	_, err = server.store.NewDocumentTx(c, db.NewDocumentParams{
+		Username:   "emma",
+		IsPrivate:  false,
+		HasSummary: true,
+		FileName:   uploaded_file,
+		Param1:     false,
+		Param2:     false,
+		Summary:    "no summary no summary no summary thank you",
+	})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -75,6 +76,7 @@ func (server *Server) UploadFileToS3(fileDir string, file *os.File) (string, err
 		Bucket: aws.String(server.s3_bucket),
 		Key:    aws.String(filename),
 		Body:   file,
+		// todo add tags for username
 	})
 
 	if err != nil {

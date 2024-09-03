@@ -12,15 +12,11 @@ import (
 )
 
 func TestNewDocumentTx(t *testing.T) {
-	config, err := util.LoadConfig("../..")
-	if err != nil {
-		log.Fatal("cannot load config:", err)
-	}
-	TestDB, err = sql.Open(config.DBDriver, config.DBUrl)
+	testDB, err := sql.Open("postgres", "postgresql://emma:happy@localhost:5434/summafy?sslmode=disable")
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-	store := NewStore(TestDB)
+	store := NewStore(testDB)
 
 	usr, err := createRandomUser(t)
 	require.NoError(t, err)
