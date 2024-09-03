@@ -5,12 +5,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/emmaahmads/summafy/util"
-	"github.com/gin-gonic/gin"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	db "github.com/emmaahmads/summafy/db/sqlc"
+	"github.com/emmaahmads/summafy/util"
+	"github.com/gin-gonic/gin"
 )
 
 func (server *Server) HandlerUploadDoc(c *gin.Context) {
@@ -32,13 +32,32 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		return
 	}
 
-	message, err := server.UploadFileToS3("./upload/", local_file)
+	uploaded_file, err := server.UploadFileToS3("./upload/", local_file)
+
+	// remove local copy
 	os.Remove(dst)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": message})
+
+	// start transaction of New Document
+	_, err = server.store.NewDocumentTx(c, db.NewDocumentParams{
+		Username:   "emma",
+		IsPrivate:  false,
+		HasSummary: true,
+		FileName:   uploaded_file,
+		Param1:     false,
+		Param2:     false,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": uploaded_file})
 
 }
 
