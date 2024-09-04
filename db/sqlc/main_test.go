@@ -10,7 +10,6 @@ import (
 )
 
 var testQueries *Queries
-var testDB *sql.DB
 
 func TestMain(m *testing.M) {
 	testDB, err := sql.Open("postgres", "postgresql://emma:happy@localhost:5434/summafy?sslmode=disable")

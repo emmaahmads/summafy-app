@@ -33,8 +33,10 @@ func NewServer(store db.Store, aws_conf *awsConfig) *Server {
 	r.LoadHTMLGlob("templates/*")
 	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/", server.HandlerLandingPage)
+	r.GET("/dashboard", server.HandlerLandingPage)
 	r.GET("/upload", server.HandlerUploadPage)
 	r.GET("/view", server.HandlerViewPage)
+	r.GET("/view:id", server.HandlerViewPage)
 	r.POST("/upload", server.HandlerUploadDoc)
 
 	server.router = r

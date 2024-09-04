@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -13,7 +14,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (server *Server) HandlerUploadPage(c *gin.Context) {
+	c.HTML(200, "uploadform.html", gin.H{
+		"emma": "Emma",
+	})
+
+	c.Header("Content-Type", "text/html")
+}
+
 func (server *Server) HandlerUploadDoc(c *gin.Context) {
+
 	file, err := c.FormFile("document")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -43,7 +53,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 	}
 
 	//start transaction of New Document
-	_, err = server.store.NewDocumentTx(c, db.NewDocumentParams{
+	doc, err := server.store.NewDocumentTx(c, db.NewDocumentParams{
 		Username:   "emma",
 		IsPrivate:  false,
 		HasSummary: true,
@@ -53,13 +63,12 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		Summary:    "no summary no summary no summary thank you",
 	})
 
+	c.Header("Content-Type", "text/html")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"message": uploaded_file})
-
+	c.Redirect(http.StatusFound, "/view?doc_id="+strconv.Itoa(int(doc.Document.ID)))
 }
 
 func (server *Server) UploadFileToS3(fileDir string, file *os.File) (string, error) {
