@@ -44,13 +44,20 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 
 	uploaded_file, err := server.UploadFileToS3("./upload/", local_file)
 
-	// remove local copy
-	os.Remove(dst)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	// get summary from open AI
+	summary, err := server.SummarizeTextFile("./upload/test.txt")
+
+	if err != nil {
+		summary = "Summary could not be generated"
+	}
+	util.MyGinLogger(summary)
+	// remove local copy
+	os.Remove(dst)
 
 	//start transaction of New Document
 	doc, err := server.store.NewDocumentTx(c, db.NewDocumentParams{
@@ -60,7 +67,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		FileName:   uploaded_file,
 		Param1:     false,
 		Param2:     false,
-		Summary:    "no summary no summary no summary thank you",
+		Summary:    summary,
 	})
 
 	c.Header("Content-Type", "text/html")

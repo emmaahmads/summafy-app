@@ -14,6 +14,7 @@ type Config struct {
 	Creds1        string `mapstructure:"AWS_CREDENTIALS_1"`
 	Creds2        string `mapstructure:"AWS_CREDENTIALS_2"`
 	Creds3        string `mapstructure:"AWS_CREDENTIALS_3"`
+	ApiKey        string `mapstructure:"API_KEY"`
 }
 
 // LoadConfig reads configuration from file or environment variables.

@@ -13,11 +13,10 @@ type Server struct {
 	router    *gin.Engine
 	aws       *aws.Config
 	s3_bucket string
-
-	// openai
+	apiKey    string
 }
 
-func NewServer(store db.Store, aws_conf *awsConfig) *Server {
+func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
 	util.MyGinLogger(aws_conf.s3_bucket, aws_conf.region, aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2])
 	server := &Server{
 		store: store,
@@ -26,6 +25,7 @@ func NewServer(store db.Store, aws_conf *awsConfig) *Server {
 			Credentials: credentials.NewStaticCredentials(aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2]),
 		},
 		s3_bucket: aws_conf.s3_bucket,
+		apiKey:    apiKey,
 	}
 
 	r := gin.Default()
