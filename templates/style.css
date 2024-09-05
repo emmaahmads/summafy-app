@@ -39,27 +39,69 @@ body {
 }
 
 .activity-history {
-    margin-top: 20px;
+    /* styles for the container */
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .activity-history h2 {
-    font-size: 20px;
-}
-
-.activity-history ul {
-    list-style: none;
-    padding: 0;
-}
-
-.activity-history li {
+    /* styles for the heading */
+    font-weight: bold;
+    font-size: 18px;
     margin-bottom: 10px;
 }
 
-.activity-history .activity-date {
-    font-size: 14px;
-    color: #777;
+.activity-history ul {
+    /* styles for the list */
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.activity-history .activity-description {
-    font-size: 16px;
+.activity-history li {
+    /* styles for each list item */
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.activity-history li:last-child {
+    /* styles for the last list item */
+    border-bottom: none;
+}
+
+.activity-date {
+    /* styles for the date */
+    font-size: 14px;
+    color: #666;
+}
+
+.activity-user {
+    /* styles for the user */
+    font-size: 14px;
+    color: #666;
+}
+
+.activity-description {
+    /* styles for the description */
+    font-size: 14px;
+    color: #666;
+}
+
+.activity-document {
+    /* styles for the document link */
+    font-size: 14px;
+    color: #337ab7;
+}
+
+.activity-document a {
+    /* styles for the document link */
+    text-decoration: none;
+}
+
+.activity-document a:hover {
+    /* styles for the document link on hover */
+    color: #23527c;
 }

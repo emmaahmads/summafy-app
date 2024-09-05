@@ -7,34 +7,26 @@ package db
 
 import (
 	"context"
-	"time"
 )
 
 const createActivity = `-- name: CreateActivity :one
 INSERT INTO activities (
   username,
   activity,
-  document_id,
-  created_at
+  document_id
  ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 ) RETURNING id, username, activity, created_at, document_id
 `
 
 type CreateActivityParams struct {
-	Username   string    `json:"username"`
-	Activity   int64     `json:"activity"`
-	DocumentID int64     `json:"document_id"`
-	CreatedAt  time.Time `json:"created_at"`
+	Username   string `json:"username"`
+	Activity   int64  `json:"activity"`
+	DocumentID int64  `json:"document_id"`
 }
 
 func (q *Queries) CreateActivity(ctx context.Context, arg CreateActivityParams) (Activity, error) {
-	row := q.db.QueryRowContext(ctx, createActivity,
-		arg.Username,
-		arg.Activity,
-		arg.DocumentID,
-		arg.CreatedAt,
-	)
+	row := q.db.QueryRowContext(ctx, createActivity, arg.Username, arg.Activity, arg.DocumentID)
 	var i Activity
 	err := row.Scan(
 		&i.ID,

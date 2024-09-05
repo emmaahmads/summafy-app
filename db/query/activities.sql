@@ -2,10 +2,9 @@
 INSERT INTO activities (
   username,
   activity,
-  document_id,
-  created_at
+  document_id
  ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 ) RETURNING *;
 
 -- name: GetLastActivityForUser :one
