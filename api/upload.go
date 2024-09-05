@@ -1,14 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os"
-	"strconv"
-	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
@@ -75,29 +71,5 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.Redirect(http.StatusFound, "/view?doc_id="+strconv.Itoa(int(doc.Document.ID)))
-}
-
-func (server *Server) UploadFileToS3(fileDir string, file *os.File) (string, error) {
-	sess, err := session.NewSession(server.aws)
-
-	if err != nil {
-		return "", err
-	}
-
-	filename := strings.Split(file.Name(), "/")[2]
-	util.MyGinLogger(filename)
-	svc := s3.New(sess)
-	_, err = svc.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(server.s3_bucket),
-		Key:    aws.String(filename),
-		Body:   file,
-		// todo add tags for username
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	return filename, nil
+	c.Redirect(http.StatusFound, fmt.Sprintf("/viewdoc/%d", doc.Document.ID))
 }

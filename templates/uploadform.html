@@ -2,7 +2,25 @@
     <title>Upload Documents</title>
     <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
-<form method="post" id="upload-form" enctype="multipart/form-data">
-    <input type="file" id="document" name="document">
-    <button type="submit">Upload Document</button>
-</form>
+
+<body>
+    <!-- Add this to your HTML file -->
+    <script>
+        function toggleDarkMode() {
+            if (document.body) {
+                document.body.classList.toggle('dark-mode');
+            } else {
+                console.error('document.body is null');
+            }
+        }
+
+    </script>
+    <!-- Toggle button to switch between light and dark mode -->
+    <button class="toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <!-- Your webpage content here -->
+    <form method="post" id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="document" name="document">
+        <button type="submit">Upload Document</button>
+    </form>
+</body>

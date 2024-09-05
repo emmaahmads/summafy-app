@@ -2,16 +2,41 @@
     <title>View Documents</title>
     <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
-<table>
-    <tr>
-        <th>Document Link</th>
-        <th>Attributes</th>
-        <th>Summary</th>
-    </tr>
-    <tr>
-        <td><a href="#">Link to document</a></td>
-        <td>Attribute 1, Attribute 2, Attribute 3</td>
-        <td>Brief summary of the document</td>
-    </tr>
-    <!-- Add more rows as needed -->
-</table>
+
+<body>
+    <!-- Add this to your HTML file -->
+    <script>
+        function toggleDarkMode() {
+            if (document.body) {
+                document.body.classList.toggle('dark-mode');
+            } else {
+                console.error('document.body is null');
+            }
+        }
+
+    </script>
+    <!-- Toggle button to switch between light and dark mode -->
+    <button class="toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <!-- Your webpage content here -->
+    <table>
+        <tr>
+            <th>Document Link</th>
+            <th>Details</th>
+        </tr>
+        {{ range .document }}
+        <tr>
+            <form action="{{ .Download }}" method="get">
+                <!-- form fields here -->
+                <input type="submit" value="Download">
+            </form>
+            <li>Name: {{ .Filename }}</li>
+            <li>Owner: {{ .UserId }}</li>
+            <li>Size: {{ .Size }}</li>
+            <li>Created: {{ .CreatedAt }}</li>
+            <li>Summary/description: {{ .Summary }}</li>
+            </td>
+        </tr>
+        {{ end }}
+    </table>
+</body>

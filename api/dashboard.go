@@ -2,9 +2,8 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
-
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,7 +45,7 @@ func (server *Server) HandlerLandingPage(c *gin.Context) {
 			User:     user.FullName,
 			Activity: activity_type[int(activities[a].Activity)],
 			Document: Link{
-				Href: "/view?doc_id=" + strconv.Itoa(int(activities[a].DocumentID)),
+				Href: fmt.Sprintf("/viewdoc/%d", (activities[a].DocumentID)),
 				Rel:  doc.FileName,
 			},
 		}
