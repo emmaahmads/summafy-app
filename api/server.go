@@ -39,6 +39,8 @@ func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
 	r.GET("/viewdoc/:id", server.HandlerViewDocumentsUploaded)
 	r.POST("/upload", server.HandlerUploadDoc)
 	r.GET("/download/:filename", server.HandlerDownloadDoc)
+	r.POST("/notification", server.HandlerNotification)
+	r.GET("/display-notified-objects", server.HandlerDisplayNotifiedObjects)
 
 	server.router = r
 	return server

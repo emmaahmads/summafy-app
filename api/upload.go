@@ -6,7 +6,6 @@ import (
 	"os"
 
 	db "github.com/emmaahmads/summafy/db/sqlc"
-	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,14 +44,14 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		return
 	}
 
-	// get summary from open AI
+	/* // get summary from open AI
 	summary, err := server.SummarizeTextFile("./upload/test.txt")
 
 	if err != nil {
 		summary = "Summary could not be generated"
 	}
 	util.MyGinLogger(summary)
-	// remove local copy
+	// remove local copy */
 	os.Remove(dst)
 
 	//start transaction of New Document
@@ -60,10 +59,10 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		Username:   "emma",
 		IsPrivate:  false,
 		HasSummary: true,
-		FileName:   uploaded_file,
+		FileName:   uploaded_file.filename,
 		Param1:     false,
 		Param2:     false,
-		Summary:    summary,
+		Summary:    string(uploaded_file.summary),
 	})
 
 	c.Header("Content-Type", "text/html")
