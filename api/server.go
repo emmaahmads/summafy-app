@@ -32,6 +32,12 @@ func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
 	r.Use(gin.Logger())
 	r.LoadHTMLGlob("templates/*")
 	r.StaticFile("/style.css", "templates/style.css")
+	r.GET("/signup", server.HandlerSignupPage)
+	r.POST("/signup", server.HandlerSignup)
+	r.GET("/login", server.HandlerLoginPage)
+	r.POST("/login", server.HandlerLogin)
+
+	// need token
 	r.GET("/", server.HandlerLandingPage)
 	r.GET("/dashboard", server.HandlerLandingPage)
 	r.GET("/upload", server.HandlerUploadPage)
