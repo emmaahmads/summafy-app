@@ -1,32 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        /* Add some basic styling */
         body {
             font-family: Arial, sans-serif;
         }
 
-        form {
+        .login-form {
             width: 300px;
-            margin: 40px auto;
+            margin: 50px auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
+        .login-form input {
             width: 100%;
             height: 40px;
             margin-bottom: 20px;
@@ -34,7 +25,7 @@
             border: 1px solid #ccc;
         }
 
-        button[type="submit"] {
+        .login-form button {
             width: 100%;
             height: 40px;
             background-color: #4CAF50;
@@ -44,95 +35,49 @@
             border-radius: 10px;
             cursor: pointer;
         }
+
+        .login-form button:hover {
+            background-color: #3e8e41;
+        }
     </style>
 </head>
 
 <body>
-    <form id="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
-        <button type="submit">Login</button>
-    </form>
+    <div class="login-form">
+        <h2>Login</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button type="submit">Login</button>
+        </form>
+    </div>
 
     <script>
         const form = document.getElementById('login-form');
-        const headers = new Headers();
-        form.addEventListener('submit', async (e) => {
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
-            console.log('Form submitted');
-
-            const username = document.getElementById('username');
-            const password = document.getElementById('password');
-
-            if (!username || !password) {
-                console.error('Error:', 'Username or password field is null');
-                return;
-            }
-
-            const usernameValue = username.value;
-            const passwordValue = password.value;
-
-            if (usernameValue.length === 0 || passwordValue.length === 0) {
-                console.error('Error:', 'Username or password is empty');
-                return;
-            }
-
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: usernameValue, password: passwordValue }),
-                });
-
-                if (response.status !== 200) {
-                    console.error('Error:', 'Failed to login');
-                    return;
-                }
-
-                const data = await response.json();
-                console.log('Response data:', data.success);
-
-                if (!data.success) {
-                    alert(data.error);
-                    return;
-                }
-
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('username', data.username);
-
-                //   redirectDashboard();
-
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-
-        function redirectDashboard() {
-            if (localStorage.getItem('token') !== null) {
-                fetch('/dashboard', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }).then((res) => {
-                    if (res.ok) {
-                        console.log('Redirecting to dashboard');
-                        window.location.href = res.url;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.token) {
+                        localStorage.setItem('token', data.token);
+                        window.location.href = '/';
                     } else {
-                        console.error('Error:', 'Failed to redirect to dashboard');
+                        alert('Invalid username or password');
                     }
-                }).catch((error) => {
-                    console.error('Error:', error);
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
-            } else {
-                console.error('Error:', 'No token found in local storage');
-            }
-            // window.location.href = '/dashboard';
-        }
+        });
     </script>
 </body>
 

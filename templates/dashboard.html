@@ -9,36 +9,17 @@
 <body>
     <!-- Add this to your HTML file -->
     <script>
-        console.log('Dashboard page loaded');
-
-        const token = localStorage.getItem('token');
-        const username = localStorage.getItem('username');
-
-        if (!token || !username) {
-            console.log('Token or username is missing. Redirecting to login page.');
-            window.location.href = '/login'; // redirect to login page if token is missing
+        function toggleDarkMode() {
+            if (document.body) {
+                document.body.classList.toggle('dark-mode');
+            } else {
+                console.error('document.body is null');
+            }
         }
 
-        /* const getDataBtn = document.getElementById('get-data-btn');
-        getDataBtn.addEventListener('click', async () => {
-            console.log('Get data button clicked');
-
-             const response = await fetch('/api/data', {
-                  method: 'GET',
-                  headers: {
-                      'Authorization': `Bearer ${token}`,
-                  },
-              }); 
-
-            console.log('Response received');
-
-            const data = await response.json();
-            const dataContainer = document.getElementById('data-container');
-            dataContainer.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-
-            console.log('Data rendered'); 
-        });*/
     </script>
+    <!-- Toggle button to switch between light and dark mode -->
+    <button class="toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 
     <!-- Your webpage content here -->
     <div class="container">
