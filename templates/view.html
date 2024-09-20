@@ -1,42 +1,39 @@
 <head>
     <title>View Documents</title>
-    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
 <body>
-    <!-- Add this to your HTML file -->
-    <script>
-        function toggleDarkMode() {
-            if (document.body) {
-                document.body.classList.toggle('dark-mode');
-            } else {
-                console.error('document.body is null');
-            }
-        }
+    <div class="container">
+        <button class="toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 
-    </script>
-    <!-- Toggle button to switch between light and dark mode -->
-    <button class="toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <h1>View Documents</h1>
 
-    <!-- Your webpage content here -->
-    <table>
-        <tr>
-            <th>Document Link</th>
-            <th>Details</th>
-        </tr>
-        {{ range .document }}
-        <tr>
-            <form action="{{ .Download }}" method="get">
-                <!-- form fields here -->
-                <input type="submit" value="Download">
-            </form>
-            <li>Name: {{ .Filename }}</li>
-            <li>Owner: {{ .UserId }}</li>
-            <li>Size: {{ .Size }}</li>
-            <li>Created: {{ .CreatedAt }}</li>
-            <li>Summary/description: {{ .Summary }}</li>
-            </td>
-        </tr>
-        {{ end }}
-    </table>
+        <table class="table">
+            <tr>
+                <th>Document Link</th>
+                <th>Details</th>
+            </tr>
+            {{ range .document }}
+            <tr>
+                <td>
+                    <form action="{{ .Download }}" method="get">
+                        <button type="submit" class="btn btn-primary">Download</button>
+                    </form>
+                </td>
+                <td>
+                    <ul>
+                        <li>Name: {{ .Filename }}</li>
+                        <li>Owner: {{ .UserId }}</li>
+                        <li>Size: {{ .Size }}</li>
+                        <li>Created: {{ .CreatedAt }}</li>
+                        <li>Summary/description: {{ .Summary }}</li>
+                    </ul>
+                </td>
+            </tr>
+            {{ end }}
+        </table>
+
+        <p><a href="/dashboard" class="btn btn-secondary">Go to Dashboard</a></p>
+    </div>
 </body>

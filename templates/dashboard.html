@@ -25,12 +25,14 @@
     <div class="container">
         <div class="header">
             <h1>Summafy Dashboard</h1>
+            <p>Hello, {{ .user }}!</p>
             <p>Here you can upload documents and view the history of activities.</p>
         </div>
 
         <ul class="nav-links">
             <li><a href="/upload">Upload Document</a></li>
             <li><a href="/view">View Documents</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
 
         <div class="activity-history">

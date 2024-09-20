@@ -55,5 +55,7 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{"message": "User created successfully", "user": user})
+	c.Set("username", userInput.Username)
+
+	c.JSON(201, gin.H{"status": true, "user": user})
 }

@@ -1,10 +1,14 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,18 +31,25 @@ func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
 		s3_bucket: aws_conf.s3_bucket,
 		apiKey:    apiKey,
 	}
-
+	mycookie := cookie.NewStore([]byte("mysecretkey"))
 	r := gin.Default()
 	r.Use(gin.Logger())
+	r.Use(sessions.Sessions("mysession", mycookie))
 	r.LoadHTMLGlob("templates/*")
 	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/signup", server.HandlerSignupPage)
 	r.POST("/signup", server.HandlerSignup)
 	r.GET("/login", server.HandlerLoginPage)
+	r.GET("/", server.HandlerLoginPage)
 	r.POST("/login", server.HandlerLogin)
+	r.GET("/logout", func(c *gin.Context) {
+		session := sessions.Default(c)
+		session.Delete("username")
+		session.Save()
+		c.Redirect(http.StatusFound, "/login")
+	})
 
 	// need token
-	r.GET("/", server.HandlerLandingPage)
 	r.GET("/dashboard", server.HandlerLandingPage)
 	r.GET("/upload", server.HandlerUploadPage)
 	r.GET("/view", server.HandlerViewDocuments)

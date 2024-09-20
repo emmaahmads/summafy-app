@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
 	"github.com/emmaahmads/summafy/util"
@@ -15,6 +16,7 @@ func (server *Server) HandlerLoginPage(c *gin.Context) {
 
 // HandlerLogin handles POST requests to the /login endpoint
 func (server *Server) HandlerLogin(c *gin.Context) {
+	session := sessions.Default(c)
 	var userInput struct {
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
@@ -38,12 +40,8 @@ func (server *Server) HandlerLogin(c *gin.Context) {
 		return
 	}
 
-	/* // Generate a JWT token for the user
-	token, err := util.GenerateJWTToken(user.Username)
-	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to generate JWT token"})
-		return
-	}
-	*/
+	session.Set("username", user.Username)
+	session.Save()
+
 	c.JSON(200, gin.H{"token": "N/A", "username": user.Username})
 }
