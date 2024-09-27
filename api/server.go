@@ -8,7 +8,8 @@ import (
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+
+	//"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,10 +32,18 @@ func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
 		s3_bucket: aws_conf.s3_bucket,
 		apiKey:    apiKey,
 	}
-	mycookie := cookie.NewStore([]byte("mysecretkey"))
+	//mycookie := cookie.NewStore([]byte("mysecretkey"))
 	r := gin.Default()
 	r.Use(gin.Logger())
-	r.Use(sessions.Sessions("mysession", mycookie))
+	// Set Access-Control-Allow-Origin header
+	r.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Next()
+	})
+
+	//r.Use(sessions.Sessions("mysession", mycookie))
 	r.LoadHTMLGlob("templates/*")
 	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/signup", server.HandlerSignupPage)
