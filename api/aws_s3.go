@@ -135,7 +135,7 @@ func (server *Server) HandlerNotification(c *gin.Context) {
 	util.MyGinLogger("Received summary:", string(notification.Summary))
 	s3ObjectsNotifiedMap[notification.Name] = s3ObjectUploaded{
 		filename: notification.Name,
-		summary:  notification.Summary, //notification.Summary,
+		summary:  notification.Summary,
 	}
 	util.MyGinLogger("Stored notification:", notification.Name, string(notification.Summary))
 }

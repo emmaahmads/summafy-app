@@ -58,6 +58,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		return
 	}
 
+	/* TODO for unit test */
 	/* // get summary from open AI
 	summary, err := server.SummarizeTextFile("./upload/test.txt")
 
@@ -65,6 +66,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		summary = "Summary could not be generated"
 	}
 	util.MyGinLogger(summary)
+
 	// remove local copy */
 	os.Remove(dst)
 
