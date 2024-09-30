@@ -1,0 +1,63 @@
+<!-- templates/signupform.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }}</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <h1>Sign Up</h1>
+    <form id="signup-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <label for="confirm-password">Confirm Password:</label>
+        <input type="password" id="confirm-password" name="confirm-password"><br><br>
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('signup-form');
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+
+            console.log('Form submitted');
+
+            const formData = new FormData(form);
+            const jsonData = Object.fromEntries(formData.entries());
+
+            console.log('Submitting data:', jsonData);
+
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(jsonData),
+                });
+
+                console.log('Response:', response);
+
+                const data = await response.json();
+                console.log('Response data:', data.status);
+                if (data.status) {
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

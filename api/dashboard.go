@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +22,7 @@ type dashboard_history struct {
 }
 
 func (server *Server) HandlerLandingPage(c *gin.Context) {
+	username_str, _ := sessions.Default(c).Get("username").(string)
 	var activity []dashboard_history
 	activity_type := map[int]string{
 		0: "uploaded",
@@ -32,6 +34,15 @@ func (server *Server) HandlerLandingPage(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+
+	//  TODO - add a new table that consists of existing documents on the S3 bucket
+	// this table should not be published
+	// activity lists and view lists should only display the documents that are in this table
+
+	// TODO - do not display redundant documents activities, display only the latest
+	// example when user keeps uploading the same file
+
+	// TODO - enable session
 
 	for a := range activities {
 		user, _ := server.store.Queries.GetUser(context.Background(), activities[a].Username)
@@ -53,6 +64,6 @@ func (server *Server) HandlerLandingPage(c *gin.Context) {
 		activity = append(activity, act)
 	}
 
-	c.HTML(200, "dashboard.html", gin.H{"act": activity})
+	c.HTML(200, "dashboard.html", gin.H{"act": activity, "user": username_str})
 	c.Header("Content-Type", "text/html")
 }

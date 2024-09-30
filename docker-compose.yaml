@@ -1,0 +1,50 @@
+version: "3.9"
+
+networks:
+  summafy-network:
+    driver: bridge
+
+services:
+  # postgres:
+  #   image: postgres:latest
+  #   environment:
+  #     POSTGRES_USER: emma
+  #     POSTGRES_PASSWORD: happy
+  #     POSTGRES_DB: summafy
+  #   ports:
+  #     - "5434:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - summafy-network
+
+  # postgres4:
+  #   container_name: postgres4
+  #   networks:
+  #     - summafy-network
+  #   restart: always
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    # depends_on:
+    #   - postgres
+    environment:
+      DATABASE_URL: "postgresql://emma:happy@172.17.0.2:5434/summafy?sslmode=disable"
+    networks:
+      - summafy-network
+
+#   ubuntu:
+#     image: ubuntu:20.04
+#     command: /bin/bash
+#     stdin_open: true
+#     tty: true
+#     restart: "no"
+#     volumes:
+#       - ubuntu-data:/home/user
+#     networks:
+#       - summafy-network
+# volumes:
+#     postgres-data:

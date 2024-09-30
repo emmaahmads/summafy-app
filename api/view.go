@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,8 +18,6 @@ type DocumentView struct {
 }
 
 func (server *Server) HandlerViewDocuments(c *gin.Context) {
-
-	util.MyGinLogger("HEYYYYYYY")
 	c.HTML(200, "view.html", gin.H{})
 
 	c.Header("Content-Type", "text/html")
