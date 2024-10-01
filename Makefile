@@ -4,9 +4,9 @@ include app.env
 sqlc:
 	sqlc generate
 migrateup:
-	goose -dir db/migration $(GOOSE_DRIVER) $(GOOSE_DBSTRING) up
+	goose -dir db/migration $(DB_DRIVER) $(DB_URL) up
 migratedown:
-	goose -dir db/migration $(GOOSE_DRIVER) $(GOOSE_DBSTRING) down
+	goose -dir db/migration $(DB_DRIVER) $(DB_URL) down
 test:
 	go test -v -cover -short ./...
 server:
