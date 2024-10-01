@@ -22,26 +22,26 @@ jobs:
     - name: Set Production mode and AWS config
       run: |
         echo "PROD=true" >> app.env
-        echo "AWS_REGION=${{ vars.AWS_S3_REGION }}" >> app.env
-        echo "AWS_CREDENTIALS_1=${{ vars.AWS_CREDENTIALS_1 }}" >> app.env
-        echo "AWS_CREDENTIALS_2=${{ vars.AWS_CREDENTIALS_2 }}" >> app.env
-        echo "AWS_CREDENTIALS_3=${{ vars.AWS_CREDENTIALS_3 }}" >> app.env
+        echo "AWS_REGION=${{ var.AWS_S3_REGION }}" >> app.env
+        echo "AWS_CREDENTIALS_1=${{ var.AWS_CREDENTIALS_1 }}" >> app.env
+        echo "AWS_CREDENTIALS_2=${{ var.AWS_CREDENTIALS_2 }}" >> app.env
+        echo "AWS_CREDENTIALS_3=${{ var.AWS_CREDENTIALS_3 }}" >> app.env
        
     - name: Replace placeholders in app.env
       run: |
         sed -i '/DB_URL/d' app.env
         sed -i '/DB_DRIVER/d' app.env
-        echo "DB_URL=${{ vars.DATABASE_URL }}" >> app.env
-        echo "DB_DRIVER=${{ vars.DATABASE_DRIVER }}" >> app.env
+        echo "DB_URL=${{ var.DATABASE_URL }}" >> app.env
+        echo "DB_DRIVER=${{ var.DATABASE_DRIVER }}" >> app.env
         echo "TODO change API_KEY, PORT and SERVER_ADDRESS"
         cat app.env
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_ACCESS_REGION }}
+        aws-access-key-id: ${{ var.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ var.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ var.AWS_ACCESS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
