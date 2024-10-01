@@ -26,7 +26,6 @@ jobs:
         echo "AWS_CREDENTIALS_1=${{ secrets.AWS_CREDENTIALS_1 }}" >> app.env
         echo "AWS_CREDENTIALS_2=${{ secrets.AWS_CREDENTIALS_2 }}" >> app.env
         echo "AWS_CREDENTIALS_3=${{ secrets.AWS_CREDENTIALS_3 }}" >> app.env
-        echo "API_KEY=${{ secrets.OPENAI_API_KEY }}" >> app.env
        
     - name: Replace placeholders in app.env
       run: |
@@ -34,7 +33,7 @@ jobs:
         sed -i '/DB_DRIVER/d' app.env
         echo "DB_URL=${{ secrets.DATABASE_URL }}" >> app.env
         echo "DB_DRIVER=${{ secrets.DATABASE_DRIVER }}" >> app.env
-    # TODO change PORT and SERVER_ADDRESS
+        echo "TODO change PORT and SERVER_ADDRESS"
         cat app.env
     
     - name: Configure AWS credentials
@@ -56,5 +55,4 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
-
-    # TODO deploy to Amazon ECS
+        echo "TODO deploy to Amazon ECS"
