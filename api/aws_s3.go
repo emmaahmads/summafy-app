@@ -14,10 +14,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type awsConfig struct {
+type AwsConfig struct {
 	s3_bucket string
 	region    string
 	creds     []string
+	apiKey    string
 }
 
 type s3ObjectUploaded struct {
@@ -27,8 +28,8 @@ type s3ObjectUploaded struct {
 
 var s3ObjectsNotifiedMap = make(map[string]s3ObjectUploaded)
 
-func NewAwsConfig(s3_bucket string, region string, creds ...string) *awsConfig {
-	return &awsConfig{
+func NewAwsConfig(s3_bucket string, region string, creds ...string) *AwsConfig {
+	return &AwsConfig{
 		s3_bucket: s3_bucket,
 		region:    region,
 		creds:     creds,

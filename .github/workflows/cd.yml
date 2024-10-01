@@ -19,6 +19,23 @@ jobs:
       uses: azure/setup-kubectl@v4
       id: install
 
+    - name: Set Production mode and AWS config
+      run: |
+        echo "PROD=true" >> app.env
+        echo "AWS_REGION=${{ secrets.AWS_S3_REGION }}" >> app.env
+        echo "AWS_CREDENTIALS_1=${{ secrets.AWS_CREDENTIALS_1 }}" >> app.env
+        echo "AWS_CREDENTIALS_2=${{ secrets.AWS_CREDENTIALS_2 }}" >> app.env
+        echo "AWS_CREDENTIALS_3=${{ secrets.AWS_CREDENTIALS_3 }}" >> app.env
+        echo "API_KEY=${{ secrets.OPENAI_API_KEY }}" >> app.env
+       
+    - name: Replace placeholders in app.env
+      run: |
+        sed -i '/DB_URL/d' app.env
+        sed -i '/DB_DRIVER/d' app.env
+        echo "DB_URL=${{ secrets.DATABASE_URL }}" >> app.env
+        echo "DB_DRIVER=${{ secrets.DATABASE_DRIVER }}" >> app.env
+        cat app.env
+    
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -29,9 +46,6 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
-
-    # - name: Load secrets and save to app.env
-    #   run: aws secretsmanager get-secret-value --secret-id simple_bank --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
 
     - name: Build, tag, and push image to Amazon ECR
       env:

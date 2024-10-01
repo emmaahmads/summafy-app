@@ -1,5 +1,6 @@
 include app.env
 
+
 sqlc:
 	sqlc generate
 migrateup:
