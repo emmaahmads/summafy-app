@@ -21,7 +21,7 @@ type Server struct {
 	apiKey    string
 }
 
-func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
+func NewServer(store db.Store, aws_conf *AwsConfig) *Server {
 	util.MyGinLogger(aws_conf.s3_bucket, aws_conf.region, aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2])
 	server := &Server{
 		store: store,
@@ -30,7 +30,7 @@ func NewServer(store db.Store, aws_conf *awsConfig, apiKey string) *Server {
 			Credentials: credentials.NewStaticCredentials(aws_conf.creds[0], aws_conf.creds[1], aws_conf.creds[2]),
 		},
 		s3_bucket: aws_conf.s3_bucket,
-		apiKey:    apiKey,
+		apiKey:    aws_conf.apiKey,
 	}
 	//mycookie := cookie.NewStore([]byte("mysecretkey"))
 	r := gin.Default()
