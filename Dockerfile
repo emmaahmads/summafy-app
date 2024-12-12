@@ -1,6 +1,11 @@
 # Stage 1: Build the application
 FROM golang:1.23.1-alpine3.20 AS builder
 WORKDIR /app
+# ARG RDS_DB_URL RDS_DB_USER RDS_DB_PASSWORD 
+# ENV RDS_DB_URL=$RDS_DB_URL
+# ENV RDS_DB_USER=$RDS_DB_USER
+# ENV RDS_DB_PASSWORD=$RDS_DB_PASSWORD
+RUN echo "Building application..."
 COPY go.mod .
 COPY go.sum .
 RUN go mod download

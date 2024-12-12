@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/spf13/viper"
+	"fmt"
 )
 
 type AppConfig struct {
@@ -37,6 +38,7 @@ func LoadConfigApp(path string) (config AppConfig, err error) {
 	if err != nil {
 		return
 	}
+	fmt.Println(config.DBUrl)
 	return
 }
 
@@ -45,7 +47,7 @@ func LoadConfigAws(path string, prod string) (config AwsConfig, err error) {
 	if prod == "true" {
 		viper.SetConfigName("app")
 	} else {
-		viper.SetConfigName("aws-dev")
+	//	viper.SetConfigName("aws-dev")
 	}
 
 	viper.SetConfigType("env")
@@ -60,5 +62,6 @@ func LoadConfigAws(path string, prod string) (config AwsConfig, err error) {
 	if err != nil {
 		return
 	}
+
 	return
 }

@@ -42,7 +42,7 @@ func main() {
 		awsConf.Creds3,
 		awsConf.ApiKey,
 	))
-	err = server.Start(config.ServerAddress + ":" + config.Port)
+	err = server.Start(/* config.ServerAddress +  */":" + config.Port)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}

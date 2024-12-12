@@ -9,7 +9,7 @@ import (
 	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-contrib/sessions"
 
-	//"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,7 +32,7 @@ func NewServer(store db.Store, aws_conf *AwsConfig) *Server {
 		s3_bucket: aws_conf.s3_bucket,
 		apiKey:    aws_conf.apiKey,
 	}
-	//mycookie := cookie.NewStore([]byte("mysecretkey"))
+	mycookie := cookie.NewStore([]byte("mysecretkey"))
 	r := gin.Default()
 	r.Use(gin.Logger())
 	// Set Access-Control-Allow-Origin header
@@ -43,7 +43,7 @@ func NewServer(store db.Store, aws_conf *AwsConfig) *Server {
 		c.Next()
 	})
 
-	//r.Use(sessions.Sessions("mysession", mycookie))
+	r.Use(sessions.Sessions("mysession", mycookie))
 	r.LoadHTMLGlob("templates/*")
 	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/signup", server.HandlerSignupPage)
