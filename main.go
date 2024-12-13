@@ -30,7 +30,7 @@ func main() {
 
 	util.MyGinLogger("ProductionMode...", config.ProductionMode)
 
-	server := api.NewServer(*store)
+	server := api.NewServer(*store, "superumi-summafy-123")
 	err = server.Start(/* config.ServerAddress +  */":" + config.Port)
 	if err != nil {
 		log.Fatal("cannot start server:", err)

@@ -13,11 +13,13 @@ import (
 type Server struct {
 	store     db.Store
 	router    *gin.Engine
+	s3bucket  string
 }
 
-func NewServer(store db.Store) *Server {
+func NewServer(store db.Store, s3bucket string) *Server {
 	server := &Server{
 		store: store,
+		s3bucket: s3bucket,
 	}
 	mycookie := cookie.NewStore([]byte("mysecretkey"))
 	r := gin.Default()

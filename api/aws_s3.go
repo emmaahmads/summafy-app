@@ -1,14 +1,13 @@
 package api
 
 import (
-	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/session"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
@@ -18,7 +17,6 @@ type AwsConfig struct {
 	s3_bucket string
 	region    string
 	creds     []string
-	apiKey    string
 }
 
 type s3ObjectUploaded struct {
@@ -37,55 +35,61 @@ func NewAwsConfig(s3_bucket string, region string, creds ...string) *AwsConfig {
 }
 
 func (server *Server) UploadFileToS3(fileDir string, file *os.File) (s3ObjectUploaded, error) {
-	var new_file s3ObjectUploaded
-	summary := string("N/A")
-	sess, err := session.NewSession(server.aws)
-	// TODO add timeout for SNS notification
-	//timeout := time.NewTimer(5 * time.Second)
+	var newFile s3ObjectUploaded
+	summary := "N/A"
 
+	util.MyGinLogger("In UploadFileToS3")
+	util.MyGinLogger("FileDir:", fileDir)
+	util.MyGinLogger("File:", file.Name())
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
-		return new_file, err
+		util.MyGinLogger(err.Error())
+		return newFile, err
 	}
 
+	client := s3.NewFromConfig(cfg)
 	filename := strings.Split(file.Name(), "/")[2]
 
-	svc := s3.New(sess)
-	_, err = svc.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(server.s3_bucket),
-		Key:    aws.String(filename),
+	util.MyGinLogger("Uploading file:", filename)
+
+	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: &server.s3bucket,
+		Key:    &filename,
 		Body:   file,
-		// todo add tags for username
+		// TODO: Add tags for username
 	})
 
 	if err != nil {
-		return new_file, err
+		util.MyGinLogger(err.Error())
+		return newFile, err
 	}
+
+	util.MyGinLogger("File uploaded to S3:", filename)
 
 	go func() {
 		for {
-			if _, ok := s3ObjectsNotifiedMap[filename]; ok {
-				if filename == s3ObjectsNotifiedMap[filename].filename {
-					summary = s3ObjectsNotifiedMap[filename].summary
-				}
+			if obj, ok := s3ObjectsNotifiedMap[filename]; ok {
+				util.MyGinLogger("Summary received:", obj.summary)
+				summary = obj.summary
 				delete(s3ObjectsNotifiedMap, filename)
 				return
 			}
-			// if there is no notification we will just update db with N/A summary
+			// If no notification, update DB with N/A summary
 		}
 	}()
 
-	new_file = s3ObjectUploaded{
+	newFile = s3ObjectUploaded{
 		filename: filename,
 		summary:  summary,
 	}
 
-	return new_file, nil
+	return newFile, nil
 }
 
 // TODO func (server *Server) DeleteFileFromS3(filename string) error {}
 
 func (server *Server) DownloadFileFromS3(filename string) (string, error) {
-	sess, err := session.NewSession(server.aws)
+	/* sess, err := session.NewSession(server.aws)
 
 	if err != nil {
 		return "", err
@@ -114,7 +118,9 @@ func (server *Server) DownloadFileFromS3(filename string) (string, error) {
 	err = os.WriteFile(dst, []byte(contents), 0644)
 	if err != nil {
 		return "", err
-	}
+	} */
+
+	dst := "NA"
 
 	return dst, nil
 }
