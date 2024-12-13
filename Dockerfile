@@ -39,8 +39,8 @@ ENTRYPOINT [ "./start.sh" ]
 # RUN go get -u github.com/gin-gonic/gin
 # # RUN go get -u github.com/emmaahmads/summafy/db/sqlc
 # # RUN go get -u github.com/emmaahmads/summafy/api
-# RUN go get -u github.com/aws/aws-sdk-go/aws
-# RUN go get -u github.com/aws/aws-sdk-go/aws/session
-# RUN go get -u github.com/aws/aws-sdk-go/service/s3
+# RUN go get -u github.com/aws/aws-sdk-go-v2/aws
+# RUN go get -u github.com/aws/aws-sdk-go-v2/aws/session
+# RUN go get -u github.com/aws/aws-sdk-go-v2/service/s3
 # RUN go get -u github.com/sashabaranov/go-openai
 # RUN go get -u github.com/gin-contrib/sessions

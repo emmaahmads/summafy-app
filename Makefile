@@ -10,7 +10,7 @@ migratedown:
 test:
 	go test -v -cover -short ./...
 server:
-	go build -o server main.go RDS_DB_URL=$(RDS_DB_URL) RDS_DB_USER=$(RDS_DB_USER) RDS_DB_PASSWORD=$(RDS_DB_PASSWORD)
+	go build -o server main.go
 
 
 .PHONY: sqlc migrateup migratedown test server

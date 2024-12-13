@@ -29,19 +29,8 @@ func main() {
 	store := db.NewStore(conn)
 
 	util.MyGinLogger("ProductionMode...", config.ProductionMode)
-	awsConf, err := util.LoadConfigAws(".", config.ProductionMode)
-	if err != nil {
-		log.Fatalf("cannot load AWS config: %v", err)
-	}
 
-	server := api.NewServer(*store, api.NewAwsConfig(
-		awsConf.S3Bucket,
-		awsConf.Region,
-		awsConf.Creds1,
-		awsConf.Creds2,
-		awsConf.Creds3,
-		awsConf.ApiKey,
-	))
+	server := api.NewServer(*store)
 	err = server.Start(/* config.ServerAddress +  */":" + config.Port)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
