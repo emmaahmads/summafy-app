@@ -11,14 +11,14 @@ import (
 )
 
 type Server struct {
-	store     db.Store
-	router    *gin.Engine
-	s3bucket  string
+	store    db.Store
+	router   *gin.Engine
+	s3bucket string
 }
 
 func NewServer(store db.Store, s3bucket string) *Server {
 	server := &Server{
-		store: store,
+		store:    store,
 		s3bucket: s3bucket,
 	}
 	mycookie := cookie.NewStore([]byte("mysecretkey"))
@@ -55,6 +55,8 @@ func NewServer(store db.Store, s3bucket string) *Server {
 	r.POST("/upload", server.HandlerUploadDoc)
 	r.GET("/download/:filename", server.HandlerDownloadDoc)
 	r.POST("/notification", server.HandlerNotification)
+	r.POST("/createsummary", server.HandlerCreateSummary)
+	r.GET("/createsummary", server.HandlerCreateSummarySubscription)
 	r.GET("/display-notified-objects", server.HandlerDisplayNotifiedObjects)
 
 	server.router = r
