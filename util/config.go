@@ -2,6 +2,8 @@ package util
 
 import (
 	"github.com/spf13/viper"
+	"fmt"
+	"os"
 )
 
 type AppConfig struct {
@@ -23,32 +25,17 @@ type AwsConfig struct {
 
 // LoadConfig reads configuration from file or environment variables.
 func LoadConfigApp(path string) (config AppConfig, err error) {
+	mode := os.Getenv("MODE")
 	viper.AddConfigPath(path)
-	viper.SetConfigName("app")
-	viper.SetConfigType("env")
-	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
-	if err != nil {
-		return
-	}
-
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func LoadConfigAws(path string, prod string) (config AwsConfig, err error) {
-	viper.AddConfigPath(path)
-	if prod == "true" {
-		viper.SetConfigName("app")
+	if mode == "test" {
+		viper.SetConfigName("test")
+		viper.SetConfigType("env")
 	} else {
-		viper.SetConfigName("aws-dev")
+		viper.SetConfigName("app")
+		viper.SetConfigType("env")
 	}
-
-	viper.SetConfigType("env")
+	
 	viper.AutomaticEnv()
 
 	err = viper.ReadInConfig()
@@ -60,5 +47,7 @@ func LoadConfigAws(path string, prod string) (config AwsConfig, err error) {
 	if err != nil {
 		return
 	}
+	fmt.Println(config.DBUrl)
 	return
 }
+

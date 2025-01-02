@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: ci
+    env:
+      MODE: test
     services:
       postgres:
         image: postgres:latest

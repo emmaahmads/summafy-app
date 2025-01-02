@@ -23,12 +23,14 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(401, gin.H{"error": err.Error()})
+		util.MyGinLogger(err.Error())
 		return
 	}
 
 	if userInput.Password != userInput.ConfirmPassword {
-		c.JSON(400, gin.H{"error": "Passwords do not match"})
+		c.JSON(402, gin.H{"error": "Passwords do not match"})
+		util.MyGinLogger("Passwords do not match")
 		return
 	}
 

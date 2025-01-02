@@ -1,4 +1,4 @@
-include app.env
+include test.env
 
 
 sqlc:
@@ -10,7 +10,8 @@ migratedown:
 test:
 	go test -v -cover -short ./...
 server:
-	go run main.go
+	go build -o server main.go
+	./server
 
 
 .PHONY: sqlc migrateup migratedown test server
