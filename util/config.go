@@ -1,9 +1,10 @@
 package util
 
 import (
-	"github.com/spf13/viper"
 	"fmt"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 type AppConfig struct {
@@ -35,7 +36,7 @@ func LoadConfigApp(path string) (config AppConfig, err error) {
 		viper.SetConfigName("app")
 		viper.SetConfigType("env")
 	}
-	
+
 	viper.AutomaticEnv()
 
 	err = viper.ReadInConfig()
@@ -50,4 +51,3 @@ func LoadConfigApp(path string) (config AppConfig, err error) {
 	fmt.Println(config.DBUrl)
 	return
 }
-
