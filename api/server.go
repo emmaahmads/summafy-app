@@ -47,17 +47,17 @@ func NewServer(store db.Store, s3bucket string) *Server {
 		c.Redirect(http.StatusFound, "/login")
 	})
 
-	// need token
-	r.GET("/dashboard", server.HandlerLandingPage)
-	r.GET("/upload", server.HandlerUploadPage)
-	r.GET("/view", server.HandlerViewDocuments)
-	r.GET("/viewdoc/:id", server.HandlerViewDocumentsUploaded)
-	r.POST("/upload", server.HandlerUploadDoc)
-	r.GET("/download/:filename", server.HandlerDownloadDoc)
-	r.POST("/notification", server.HandlerNotification)
-	r.POST("/createsummary", server.HandlerCreateSummary)
-	r.GET("/createsummary", server.HandlerCreateSummarySubscription)
-	r.GET("/display-notified-objects", server.HandlerDisplayNotifiedObjects)
+	api := r.Group("/api/v1")
+	api.Use(server.middlewareAuth())
+	{
+		api.GET("/dashboard", server.HandlerLandingPage)
+		api.GET("/upload", server.HandlerUploadPage)
+		api.GET("/view", server.HandlerViewDocuments)
+		api.GET("/viewdoc/:id", server.HandlerViewDocumentsUploaded)
+		api.POST("/upload", server.HandlerUploadDoc)
+		api.GET("/download/:filename", server.HandlerDownloadDoc)
+		api.POST("/notification", server.HandlerNotification)
+	}
 
 	server.router = r
 	return server

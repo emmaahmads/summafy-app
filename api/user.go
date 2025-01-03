@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/http"
+
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
@@ -56,8 +58,12 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "Failed to create user"})
 		return
 	}
-
+	token, err := generateJWT(user.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		return
+	}
 	c.Set("username", userInput.Username)
 
-	c.JSON(201, gin.H{"status": true, "user": user})
+	c.JSON(201, gin.H{"status": true, "user": user, "token": token})
 }
