@@ -8,13 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HandlerSignupPage handles GET requests to the /signup endpoint
-func (server *Server) HandlerSignupPage(c *gin.Context) {
-	c.HTML(200, "signup.html", gin.H{
-		"title": "Sign Up",
-	})
-}
-
 // HandlerSignup handles POST requests to the /signup endpoint
 func (server *Server) HandlerSignup(c *gin.Context) {
 	var userInput struct {

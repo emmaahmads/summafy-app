@@ -12,14 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) HandlerUploadPage(c *gin.Context) {
-	c.HTML(200, "uploadform.html", gin.H{
-		"title": "Upload",
-	})
-
-	c.Header("Content-Type", "text/html")
-}
-
 func (server *Server) HandlerUploadDoc(c *gin.Context) {
 
 	username_str, ok := sessions.Default(c).Get("username").(string)

@@ -21,7 +21,7 @@ type dashboard_history struct {
 	Document Link
 }
 
-func (server *Server) HandlerLandingPage(c *gin.Context) {
+func (server *Server) HandlerDashboard(c *gin.Context) {
 	username_str, _ := sessions.Default(c).Get("username").(string)
 	var activity []dashboard_history
 	activity_type := map[int]string{
