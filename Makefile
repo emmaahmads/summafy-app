@@ -1,5 +1,6 @@
 include test.env
 
+export MODE=test
 
 sqlc:
 	sqlc generate

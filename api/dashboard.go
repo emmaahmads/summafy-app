@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,7 @@ type dashboard_history struct {
 	Document Link
 }
 
-func (server *Server) HandlerLandingPage(c *gin.Context) {
+func (server *Server) HandlerDashboard(c *gin.Context) {
 	username_str, _ := sessions.Default(c).Get("username").(string)
 	var activity []dashboard_history
 	activity_type := map[int]string{
@@ -32,6 +33,7 @@ func (server *Server) HandlerLandingPage(c *gin.Context) {
 		4: "downloaded"}
 	activities, err := server.store.Queries.GetAllActivities(context.Background())
 	if err != nil {
+		util.MyGinLogger(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
@@ -48,6 +50,7 @@ func (server *Server) HandlerLandingPage(c *gin.Context) {
 		user, _ := server.store.Queries.GetUser(context.Background(), activities[a].Username)
 		doc, err := server.store.Queries.GetDocument(context.Background(), activities[a].DocumentID)
 		if err != nil {
+			util.MyGinLogger(err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}

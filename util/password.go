@@ -19,3 +19,23 @@ func HashPassword(password string) (string, error) {
 func CheckPassword(password string, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
+
+// // CheckPasswordSha256 checks if the provided password is correct or not
+// func CheckPasswordSha256(encryptedPassword string, hashedPassword string) bool {
+// 	vm := otto.New()
+// 	vm.Run(`
+// 	const bcrypt = require('bcrypt');
+// 		function checkpassword(a, b) {
+// 			const isPasswordValid = await bcrypt.compare(userInputPassword, storedHashedPassword);
+// 			if (isPasswordValid) {
+// 				return 1;
+// 			} else {
+// 				return 0;
+// 			}
+// 		}
+// 	`)
+// 	result, _ := vm.Run(`checkpassword('password', 'hashedPassword')`)
+
+// 	isValid, _ := result.ToInteger()
+// 	return isValid == 1
+// }

@@ -8,6 +8,7 @@ import (
 )
 
 type AppConfig struct {
+	SecretKey      string `mapstructure:"SECRET_KEY"`
 	ServerAddress  string `mapstructure:"SERVER_ADDRESS"`
 	Port           string `mapstructure:"PORT"`
 	DBUrl          string `mapstructure:"DB_URL"`
@@ -30,6 +31,7 @@ func LoadConfigApp(path string) (config AppConfig, err error) {
 	viper.AddConfigPath(path)
 
 	if mode == "test" {
+		fmt.Println("test mode")
 		viper.SetConfigName("test")
 		viper.SetConfigType("env")
 	} else {
