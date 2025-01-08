@@ -56,7 +56,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 		return
 	}
 
-	file, header, err := c.Request.FormFile("file")
+	file, header, err := c.Request.FormFile("files")
 	if err != nil {
 		util.MyGinLogger("Error retrieving file from request:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

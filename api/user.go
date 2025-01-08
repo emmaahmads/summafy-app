@@ -21,7 +21,7 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 		Username        string `json:"username" binding:"required"`
 		Email           string `json:"email" binding:"required,email"`
 		Password        string `json:"password" binding:"required,min=4"`
-		ConfirmPassword string `json:"confirm-password" binding:"required,min=4"`
+		ConfirmPassword string `json:"confirm_password" binding:"required,min=4"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {

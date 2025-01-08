@@ -67,6 +67,5 @@ func (server *Server) HandlerDashboard(c *gin.Context) {
 		activity = append(activity, act)
 	}
 
-	c.HTML(200, "dashboard.html", gin.H{"act": activity, "user": username_str})
-	c.Header("Content-Type", "text/html")
+	c.JSON(200, gin.H{"act": activity, "user": username_str})
 }
