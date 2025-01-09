@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
 	"github.com/emmaahmads/summafy/util"
@@ -58,7 +57,6 @@ func (server *Server) middlewareAuth() gin.HandlerFunc {
 			return
 		}
 		util.MyGinLogger("User retrieved:", user.Username)
-		sessions.Default(ctx).Set("username", user.Username)
 		ctx.Set("username", user.Username)
 		ctx.Next()
 	}

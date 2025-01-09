@@ -10,7 +10,6 @@ import (
 
 	db "github.com/emmaahmads/summafy/db/sqlc"
 	"github.com/emmaahmads/summafy/util"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,13 +22,7 @@ func (server *Server) HandlerUploadPage(c *gin.Context) {
 }
 
 func (server *Server) HandlerUploadDoc(c *gin.Context) {
-	username_str, ok := sessions.Default(c).Get("username").(string)
-
-	if !ok {
-		util.MyGinLogger("No username provided in session")
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "No username provided"})
-		return
-	}
+	username_str := c.GetString("username")
 
 	user, err := server.store.Queries.GetUser(context.Background(), username_str)
 	if err != nil {

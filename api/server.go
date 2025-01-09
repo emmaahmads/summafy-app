@@ -8,7 +8,6 @@ import (
 	"github.com/gin-contrib/sessions"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,7 +24,7 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		s3bucket:  s3bucket,
 		secretKey: secretkey,
 	}
-	mycookie := cookie.NewStore([]byte("mysecretkey"))
+
 	r := gin.Default()
 	r.Use(gin.Logger())
 	// Set Access-Control-Allow-Origin header
@@ -39,7 +38,6 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.Use(sessions.Sessions("mysession", mycookie))
 	r.LoadHTMLGlob("templates/*")
 	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/signup", server.HandlerSignupPage)
