@@ -17,12 +17,6 @@ type DocumentView struct {
 	Download  string
 }
 
-func (server *Server) HandlerViewDocuments(c *gin.Context) {
-	c.HTML(200, "view.html", gin.H{})
-
-	c.Header("Content-Type", "text/html")
-}
-
 type getDocIdRequest struct {
 	DocId int `uri:"id" binding:"required"`
 }
