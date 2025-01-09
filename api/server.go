@@ -36,7 +36,6 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.GET("/signup", server.HandlerSignupPage)
 	r.POST("/signup", server.HandlerSignup)
 	r.POST("/login", server.HandlerLogin)
 	r.GET("/logout", func(c *gin.Context) {

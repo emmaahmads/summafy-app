@@ -12,7 +12,7 @@ import (
 )
 
 func TestNewDocumentTx(t *testing.T) {
-	testDB, err := sql.Open("postgres", "postgresql://root:test123@localhost:5432/summafy?sslmode=disable")
+	testDB, err := sql.Open("postgres", "postgresql://tester:test123@localhost:5432/summafy?sslmode=disable")
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
