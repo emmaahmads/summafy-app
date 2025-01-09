@@ -36,12 +36,8 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.LoadHTMLGlob("templates/*")
-	r.StaticFile("/style.css", "templates/style.css")
 	r.GET("/signup", server.HandlerSignupPage)
 	r.POST("/signup", server.HandlerSignup)
-	r.GET("/login", server.HandlerLoginPage)
-	r.GET("/", server.HandlerLoginPage)
 	r.POST("/login", server.HandlerLogin)
 	r.GET("/logout", func(c *gin.Context) {
 		// placeholder
@@ -51,8 +47,6 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 	api.Use(server.middlewareAuth())
 	{
 		api.GET("/dashboard", server.HandlerDashboard)
-		api.GET("/upload", server.HandlerUploadPage)
-		api.GET("/view", server.HandlerViewDocuments)
 		api.GET("/viewdoc/:id", server.HandlerViewDocumentsUploaded)
 		api.POST("/upload", server.HandlerUploadDoc)
 		api.GET("/download/:filename", server.HandlerDownloadDoc)
