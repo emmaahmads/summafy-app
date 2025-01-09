@@ -23,17 +23,16 @@ type dashboard_history struct {
 	Document Link
 }
 
-//	@BasePath	/api/v1
-
-// PingExample godoc
-//	@Summary	ping example hello
+// Dashboard godoc
+//
+//	@Summary	get user dashboard
 //	@Schemes
-//	@Description	do ping
-//	@Tags			example
+//	@Description	get user dashboard
+//	@Tags			dashboard
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{string}	Helloworld
-//	@Router			/example/helloworld [get]
+//	@Success		200	{object}	dashboard_history
+//	@Router			/dashboard [get]
 func (server *Server) HandlerDashboard(c *gin.Context) {
 	username_str := c.GetString("username")
 	var activity []dashboard_history

@@ -10,12 +10,11 @@ import (
 
 //	@BasePath	/api/v1
 
-// PingExample godoc
+// Login godoc
 //
-//	@Summary	ping example hello
-//	@Schemes
-//	@Description	do ping
-//	@Tags			example
+//	@Summary		login
+//	@Description	login
+//	@Tags			auth
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{string}	Helloworld

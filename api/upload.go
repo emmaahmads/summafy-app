@@ -15,12 +15,11 @@ import (
 
 //	@BasePath	/api/v1
 
-// PingExample godoc
+// UploadDoc godoc
 //
-//	@Summary	ping example hello
-//	@Schemes
-//	@Description	do ping
-//	@Tags			example
+//	@Summary		upload document
+//	@Description	upload document
+//	@Tags			document
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{string}	Helloworld

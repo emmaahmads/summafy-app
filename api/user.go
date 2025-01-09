@@ -12,14 +12,14 @@ import (
 
 // PingExample godoc
 //
-//	@Summary	ping example hello
-//	@Schemes
-//	@Description	do ping
-//	@Tags			example
+//	@Summary	signup
+//	@Description	signup
+//	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{string}	Helloworld
-//	@Router			/example/helloworld [get]
+//	@Param			user	body		signupInput	true	"signup input"
+//	@Success		200		{object}	signupOutput
+//	@Router			/signup [post]
 func (server *Server) HandlerSignup(c *gin.Context) {
 	var userInput struct {
 		Username        string `json:"username" binding:"required"`

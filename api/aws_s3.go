@@ -34,18 +34,15 @@ func NewAwsConfig(s3_bucket string, region string, creds ...string) *AwsConfig {
 	}
 }
 
-//	@BasePath	/api/v1
-
-// PingExample godoc
+// AwsConfig godoc
 //
-//	@Summary	ping example hello
-//	@Schemes
-//	@Description	do ping
-//	@Tags			example
+//	@Summary	AWS Config
+//	@Description	set up AWS config
+//	@Tags			AWS
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{string}	Helloworld
-//	@Router			/example/helloworld [get]
+//	@Success		200	{string}	AWS Config Info
+//	@Router			/aws/config [get]
 func (server *Server) UploadFileToS3(fileDir string, file *os.File) (s3ObjectUploaded, error) {
 	var newFile s3ObjectUploaded
 	summary := "N/A"
