@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +21,7 @@ type dashboard_history struct {
 }
 
 func (server *Server) HandlerDashboard(c *gin.Context) {
-	username_str, _ := sessions.Default(c).Get("username").(string)
+	username_str := c.GetString("username")
 	var activity []dashboard_history
 	activity_type := map[int]string{
 		0: "uploaded",
@@ -64,6 +63,5 @@ func (server *Server) HandlerDashboard(c *gin.Context) {
 		activity = append(activity, act)
 	}
 
-	c.HTML(200, "dashboard.html", gin.H{"act": activity, "user": username_str})
-	c.Header("Content-Type", "text/html")
+	c.JSON(200, gin.H{"act": activity, "user": username_str})
 }

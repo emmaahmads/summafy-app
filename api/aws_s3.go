@@ -41,14 +41,16 @@ func (server *Server) UploadFileToS3(fileDir string, file *os.File) (s3ObjectUpl
 	util.MyGinLogger("In UploadFileToS3")
 	util.MyGinLogger("FileDir:", fileDir)
 	util.MyGinLogger("File:", file.Name())
+	util.MyGinLogger("Loading AWS config")
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
-		util.MyGinLogger(err.Error())
+		util.MyGinLogger("Error loading AWS config:", err.Error())
 		return newFile, err
 	}
 
+	util.MyGinLogger("Creating S3 client")
 	client := s3.NewFromConfig(cfg)
-	filename := strings.Split(file.Name(), "/")[2]
+	filename := strings.Split(file.Name(), "/")[1]
 
 	util.MyGinLogger("Uploading file:", filename)
 
@@ -60,23 +62,25 @@ func (server *Server) UploadFileToS3(fileDir string, file *os.File) (s3ObjectUpl
 	})
 
 	if err != nil {
-		util.MyGinLogger(err.Error())
+		util.MyGinLogger("Error uploading file:", err.Error())
 		return newFile, err
 	}
 
 	util.MyGinLogger("File uploaded to S3:", filename)
 
-	go func() {
-		for {
-			if obj, ok := s3ObjectsNotifiedMap[filename]; ok {
-				util.MyGinLogger("Summary received:", obj.summary)
-				summary = obj.summary
-				delete(s3ObjectsNotifiedMap, filename)
-				return
-			}
-			// If no notification, update DB with N/A summary
-		}
-	}()
+	// go func() {
+	// 	util.MyGinLogger("Waiting for notification")
+	// 	for {
+	// 		if obj, ok := s3ObjectsNotifiedMap[filename]; ok {
+	// 			util.MyGinLogger("Summary received:", obj.summary)
+	// 			summary = obj.summary
+	// 			delete(s3ObjectsNotifiedMap, filename)
+	// 			return
+	// 		}
+	// 		util.MyGinLogger("No notification yet")
+	// 		// If no notification, update DB with N/A summary
+	// 	}
+	// }()
 
 	newFile = s3ObjectUploaded{
 		filename: filename,

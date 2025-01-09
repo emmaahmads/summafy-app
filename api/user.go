@@ -14,7 +14,7 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 		Username        string `json:"username" binding:"required"`
 		Email           string `json:"email" binding:"required,email"`
 		Password        string `json:"password" binding:"required,min=4"`
-		ConfirmPassword string `json:"confirm-password" binding:"required,min=4"`
+		ConfirmPassword string `json:"confirm_password" binding:"required,min=4"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -31,7 +31,7 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 
 	hashedPassword, err := util.HashPassword(userInput.Password)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to hash password"})
+		c.JSON(501, gin.H{"error": "Failed to hash password"})
 		return
 	}
 
@@ -48,15 +48,14 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 			c.JSON(400, gin.H{"error": "Username already exists"})
 			return
 		}
-		c.JSON(500, gin.H{"error": "Failed to create user"})
+		c.JSON(500, gin.H{"error": err})
 		return
 	}
-	token, err := generateJWT(user.Username)
+	token, err := server.generateJWT(user.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return
 	}
-	c.Set("username", userInput.Username)
 
 	c.JSON(201, gin.H{"status": true, "user": user, "token": token})
 }
