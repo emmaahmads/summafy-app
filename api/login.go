@@ -8,14 +8,17 @@ import (
 	"github.com/emmaahmads/summafy/util"
 )
 
-// HandlerLoginPage handles GET requests to the /login endpoint
-func (server *Server) HandlerLoginPage(c *gin.Context) {
-	c.HTML(200, "login.html", gin.H{
-		"title": "Login",
-	})
-}
+//	@BasePath	/api/v1
 
-// HandlerLogin handles POST requests to the /login endpoint
+// Login godoc
+//
+//	@Summary		login
+//	@Description	login
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{string}	Helloworld
+//	@Router			/example/helloworld [get]
 func (server *Server) HandlerLogin(c *gin.Context) {
 	var userInput struct {
 		Username string `json:"username" binding:"required"`

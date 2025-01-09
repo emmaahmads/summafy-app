@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
+	_ "github.com/emmaahmads/summafy/docs"
 	"github.com/gin-gonic/gin"
+	_ "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger"
 )
 
 type Link struct {
@@ -20,6 +23,16 @@ type dashboard_history struct {
 	Document Link
 }
 
+// Dashboard godoc
+//
+//	@Summary	get user dashboard
+//	@Schemes
+//	@Description	get user dashboard
+//	@Tags			dashboard
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	dashboard_history
+//	@Router			/dashboard [get]
 func (server *Server) HandlerDashboard(c *gin.Context) {
 	username_str := c.GetString("username")
 	var activity []dashboard_history

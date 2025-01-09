@@ -4,9 +4,10 @@ import (
 	"time"
 
 	db "github.com/emmaahmads/summafy/db/sqlc"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
@@ -52,6 +53,7 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		api.POST("/notification", server.HandlerNotification)
 	}
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	server.router = r
 	return server
 }

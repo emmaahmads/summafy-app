@@ -13,6 +13,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//	@BasePath	/api/v1
+
+// UploadDoc godoc
+//
+//	@Summary		upload document
+//	@Description	upload document
+//	@Tags			document
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{string}	Helloworld
+//	@Router			/example/helloworld [get]
 func (server *Server) HandlerUploadDoc(c *gin.Context) {
 	username_str := c.GetString("username")
 

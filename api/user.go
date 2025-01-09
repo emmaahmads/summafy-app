@@ -8,7 +8,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HandlerSignup handles POST requests to the /signup endpoint
+//	@BasePath	/api/v1
+
+// PingExample godoc
+//
+//	@Summary	signup
+//	@Description	signup
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		signupInput	true	"signup input"
+//	@Success		200		{object}	signupOutput
+//	@Router			/signup [post]
 func (server *Server) HandlerSignup(c *gin.Context) {
 	var userInput struct {
 		Username        string `json:"username" binding:"required"`

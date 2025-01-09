@@ -6,14 +6,22 @@ import (
 
 	"github.com/emmaahmads/summafy/api"
 	db "github.com/emmaahmads/summafy/db/sqlc"
+	_ "github.com/emmaahmads/summafy/docs"
 	"github.com/emmaahmads/summafy/util"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	_ "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger"
 )
 
 func init() {
-	logrus.SetLevel(logrus.InfoLevel) // NEW
+	logrus.SetLevel(logrus.InfoLevel)
 }
+
+//	@title			Summafy API
+//	@version		1.0
+//	@description	This is the API for the Summafy service.
+//	@BasePath	/api/v1
 
 func main() {
 	config, err := util.LoadConfigApp(".")
