@@ -8,8 +8,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-
-	"github.com/emmaahmads/summafy/util"
 )
 
 type Claims struct {
@@ -18,8 +16,6 @@ type Claims struct {
 }
 
 func (server *Server) generateJWT(username string) (string, error) {
-	util.MyGinLogger("Starting JWT generation for username:", username)
-
 	var jwtKey = []byte(server.secretKey)
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
@@ -32,12 +28,9 @@ func (server *Server) generateJWT(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		util.MyGinLogger("Error generating JWT:", err.Error())
 		return "", err
 	}
 
-	util.MyGinLogger("JWT generation successful for username:", username)
-	util.MyGinLogger("JWT:", tokenString)
 	return tokenString, nil
 }
 
@@ -45,18 +38,15 @@ func (server *Server) middlewareAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		claims, err := server.GetClaimsFromJWT(ctx.Request.Header)
 		if err != nil || claims.ExpiresAt < time.Now().Unix() {
-			util.MyGinLogger(err.Error())
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			return
 		}
-		util.MyGinLogger("Extracted username from JWT:", claims.Username)
+
 		user, err := server.store.GetUser(ctx, claims.Username)
 		if err != nil {
-			util.MyGinLogger(err.Error())
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not able to retrieve user"})
 			return
 		}
-		util.MyGinLogger("User retrieved:", user.Username)
 		ctx.Set("username", user.Username)
 		ctx.Next()
 	}
@@ -65,10 +55,8 @@ func (server *Server) middlewareAuth() gin.HandlerFunc {
 func (server *Server) GetClaimsFromJWT(headers http.Header) (*Claims, error) {
 	var jwtKey = []byte(server.secretKey)
 	claims := &Claims{}
-	util.MyGinLogger("Retrieving Authorization header")
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
-		util.MyGinLogger("Authorization header is missing")
 		return nil, errors.New("malformed authorization header")
 	}
 

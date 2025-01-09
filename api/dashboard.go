@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/emmaahmads/summafy/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,7 +31,6 @@ func (server *Server) HandlerDashboard(c *gin.Context) {
 		4: "downloaded"}
 	activities, err := server.store.Queries.GetAllActivities(context.Background())
 	if err != nil {
-		util.MyGinLogger(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
@@ -49,7 +47,6 @@ func (server *Server) HandlerDashboard(c *gin.Context) {
 		user, _ := server.store.Queries.GetUser(context.Background(), activities[a].Username)
 		doc, err := server.store.Queries.GetDocument(context.Background(), activities[a].DocumentID)
 		if err != nil {
-			util.MyGinLogger(err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
