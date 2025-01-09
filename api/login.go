@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
 	"github.com/emmaahmads/summafy/util"
@@ -18,7 +17,6 @@ func (server *Server) HandlerLoginPage(c *gin.Context) {
 
 // HandlerLogin handles POST requests to the /login endpoint
 func (server *Server) HandlerLogin(c *gin.Context) {
-	session := sessions.Default(c)
 	var userInput struct {
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
@@ -42,13 +40,6 @@ func (server *Server) HandlerLogin(c *gin.Context) {
 	if err := util.CheckPassword(userInput.Password, user.HashedPassword); err != nil {
 		util.MyGinLogger(err.Error())
 		c.JSON(403, gin.H{"error": "Invalid username or password"})
-		return
-	}
-
-	session.Set("username", user.Username)
-	if err := session.Save(); err != nil {
-		util.MyGinLogger(err.Error())
-		c.JSON(500, gin.H{"error": "Failed to save session"})
 		return
 	}
 

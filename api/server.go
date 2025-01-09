@@ -1,11 +1,9 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
 	db "github.com/emmaahmads/summafy/db/sqlc"
-	"github.com/gin-contrib/sessions"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -46,10 +44,7 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 	r.GET("/", server.HandlerLoginPage)
 	r.POST("/login", server.HandlerLogin)
 	r.GET("/logout", func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Delete("username")
-		session.Save()
-		c.Redirect(http.StatusFound, "/login")
+		// placeholder
 	})
 
 	api := r.Group("/api/v1")
