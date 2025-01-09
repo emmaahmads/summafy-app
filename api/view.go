@@ -21,6 +21,18 @@ type getDocIdRequest struct {
 	DocId int `uri:"id" binding:"required"`
 }
 
+//	@BasePath	/api/v1
+
+// PingExample godoc
+//
+//	@Summary	ping example hello
+//	@Schemes
+//	@Description	do ping
+//	@Tags			example
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{string}	Helloworld
+//	@Router			/example/helloworld [get]
 func (server *Server) HandlerViewDocumentsUploaded(c *gin.Context) {
 	var req getDocIdRequest
 	var document []DocumentView

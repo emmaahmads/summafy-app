@@ -11,6 +11,18 @@ type getDocFilenameRequest struct {
 	Filename string `uri:"filename" binding:"required"`
 }
 
+//	@BasePath	/api/v1
+
+// PingExample godoc
+//
+//	@Summary	ping example hello
+//	@Schemes
+//	@Description	do ping
+//	@Tags			example
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{string}	Helloworld
+//	@Router			/example/helloworld [get]
 func (server *Server) HandlerDownloadDoc(c *gin.Context) {
 	var req getDocFilenameRequest
 	if err := c.ShouldBindUri(&req); err != nil {
