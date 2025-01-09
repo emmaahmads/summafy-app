@@ -28,7 +28,7 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 	// Set Access-Control-Allow-Origin header
 	// Configure CORS
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8081"},
+		AllowOrigins:     []string{"http://localhost:8081"}, /* TODO - Use env var in production for container bridged networking */
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

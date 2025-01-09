@@ -43,17 +43,17 @@ func (server *Server) generateJWT(username string) (string, error) {
 
 func (server *Server) middlewareAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		username, err := server.GetUser(ctx.Request.Header)
-		if err != nil {
+		claims, err := server.GetClaimsFromJWT(ctx.Request.Header)
+		if err != nil || claims.ExpiresAt < time.Now().Unix() {
 			util.MyGinLogger(err.Error())
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "no authorization header"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			return
 		}
-		util.MyGinLogger("Extracted username from JWT:", username)
-		user, err := server.store.GetUser(ctx, username)
+		util.MyGinLogger("Extracted username from JWT:", claims.Username)
+		user, err := server.store.GetUser(ctx, claims.Username)
 		if err != nil {
 			util.MyGinLogger(err.Error())
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not able to retrive user"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not able to retrieve user"})
 			return
 		}
 		util.MyGinLogger("User retrieved:", user.Username)
@@ -62,22 +62,22 @@ func (server *Server) middlewareAuth() gin.HandlerFunc {
 	}
 }
 
-func (server *Server) GetUser(headers http.Header) (string, error) {
+func (server *Server) GetClaimsFromJWT(headers http.Header) (*Claims, error) {
 	var jwtKey = []byte(server.secretKey)
+	claims := &Claims{}
 	util.MyGinLogger("Retrieving Authorization header")
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
 		util.MyGinLogger("Authorization header is missing")
-		return "", errors.New("malformed authorization header")
+		return nil, errors.New("malformed authorization header")
 	}
 
 	splitAuth := strings.Split(authHeader, " ")
 	if len(splitAuth) != 2 {
-		return "", errors.New("malformed authorization header")
+		return nil, errors.New("malformed authorization header")
 	}
 
 	tokenStr := splitAuth[1]
-	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
@@ -85,14 +85,14 @@ func (server *Server) GetUser(headers http.Header) (string, error) {
 
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
-			return "", errors.New("invalid token signature")
+			return nil, errors.New("invalid token signature")
 		}
-		return "", errors.New("could not parse token")
+		return nil, errors.New("could not parse token")
 	}
 
 	if !token.Valid {
-		return "", errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
 
-	return claims.Username, nil
+	return claims, nil
 }
