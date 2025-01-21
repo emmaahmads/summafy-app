@@ -19,11 +19,11 @@ jobs:
       run: |
         echo "PROD=true" >> app.env
     
-     - name: Configure AWS credentials
-       uses: aws-actions/configure-aws-credentials@v3
-       with:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
         role-to-assume: arn:aws:iam::120569638976:role/GitHubActionsRole_summafyapp
-        aws-region: us-east=1
+        aws-region: us-east-1
        
     # - name: Replace placeholders in app.env
     #   run: |
