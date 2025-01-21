@@ -14,35 +14,26 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v3
-
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v4
-      id: install
-
+    
     - name: Set Production mode and AWS config
       run: |
         echo "PROD=true" >> app.env
-        echo "AWS_REGION=${{ vars.AWS_S3_REGION }}" >> app.env
-        echo "AWS_CREDENTIALS_1=${{ vars.AWS_CREDENTIALS_1 }}" >> app.env
-        echo "AWS_CREDENTIALS_2=${{ vars.AWS_CREDENTIALS_2 }}" >> app.env
-        echo "AWS_CREDENTIALS_3=${{ vars.AWS_CREDENTIALS_3 }}" >> app.env
-       
-    - name: Replace placeholders in app.env
-      run: |
-        sed -i '/DB_URL/d' app.env
-        sed -i '/DB_DRIVER/d' app.env
-        echo "DB_URL=${{ vars.DATABASE_URL }}" >> app.env
-        echo "DB_DRIVER=${{ vars.DATABASE_DRIVER }}" >> app.env
-        echo "TODO change API_KEY, PORT and SERVER_ADDRESS"
-        cat app.env
     
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_ACCESS_REGION }}
-
+     - name: Configure AWS credentials
+       uses: aws-actions/configure-aws-credentials@v3
+       with:
+        role-to-assume: arn:aws:iam::120569638976:role/GitHubActionsRole_summafyapp
+        aws-region: us-east=1
+       
+    # - name: Replace placeholders in app.env
+    #   run: |
+    #     sed -i '/DB_URL/d' app.env
+    #     sed -i '/DB_DRIVER/d' app.env
+    #     echo "DB_URL=${{ vars.DATABASE_URL }}" >> app.env
+    #     echo "DB_DRIVER=${{ vars.DATABASE_DRIVER }}" >> app.env
+    #     echo "TODO change API_KEY, PORT and SERVER_ADDRESS"
+    #     cat app.env
+    
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
@@ -50,9 +41,15 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: summafy/app
+        ECR_REPOSITORY: summafy-repo
         IMAGE_TAG: ${{ github.sha }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
-        echo "TODO deploy to Amazon ECS"
+      
+      #   - name: Build and push Docker image
+      # uses: docker/build-push-action@v3
+      # run: |
+      #   docker build -t summafy-repo .
+      #   docker tag summafy-repo:latest 120569638976.dkr.ecr.us-east-1.amazonaws.com/summafy-repo:latest
+      #   docker push 120569638976.dkr.ecr.us-east-1.amazonaws.com/summafy-repo:latest
