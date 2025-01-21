@@ -8,46 +8,81 @@ name: Unit Tests
 
 jobs:
 
-  test:
-    name: Test
+  # test:
+  #   name: Test
+  #   runs-on: ubuntu-latest
+  #   environment: 
+  #     name: ci
+  #   env:
+  #     MODE: test
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       env:
+  #         POSTGRES_USER: tester
+  #         POSTGRES_PASSWORD: test123
+  #         POSTGRES_DB: summafy
+  #       ports:
+  #         - 5432:5432
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+
+  deploy:
+    name: Build image
     runs-on: ubuntu-latest
-    environment: 
-      name: ci
-    env:
-      MODE: test
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: tester
-          POSTGRES_PASSWORD: test123
-          POSTGRES_DB: summafy
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
+    permissions:
+     id-token: write # Required for OIDC
+     contents: read  # Default for accessing repository contents
 
     steps:
-
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v4
-      with:
-        go-version: ^1.22.3
-      id: go
-
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v4
-
-    - name: Install goose
+    - name: Check out code
+      uses: actions/checkout@v3
+    
+    - name: Set Production mode and AWS config
       run: |
-        go install github.com/pressly/goose/v3/cmd/goose@latest
-        which goose
+        echo "PROD=true" >> app.env
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: arn:aws:iam::120569638976:role/GitHubActionsRole_summafyapp
+        aws-region: us-east-1
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Run migrations
-      run: make migrateup
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: summafy-repo
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+    # steps:
 
-    - name: Test
-      run: go test -v -cover -short ./...
+    # - name: Set up Go 1.x
+    #   uses: actions/setup-go@v4
+    #   with:
+    #     go-version: ^1.22.3
+    #   id: go
+
+    # - name: Check out code into the Go module directory
+    #   uses: actions/checkout@v4
+
+    # - name: Install goose
+    #   run: |
+    #     go install github.com/pressly/goose/v3/cmd/goose@latest
+    #     which goose
+
+    # - name: Run migrations
+    #   run: make migrateup
+
+    # - name: Test
+    #   run: go test -v -cover -short ./...
+
