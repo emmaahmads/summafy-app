@@ -14,6 +14,7 @@ import (
 	_ "github.com/swaggo/gin-swagger"
 )
 
+// hello test
 func init() {
 	logrus.SetLevel(logrus.InfoLevel)
 }
