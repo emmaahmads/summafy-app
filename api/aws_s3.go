@@ -99,7 +99,26 @@ func (server *Server) UploadFileToS3(fileDir string, file *os.File) (s3ObjectUpl
 	return newFile, nil
 }
 
-// TODO func (server *Server) DeleteFileFromS3(filename string) error {}
+// DeleteFileFromS3 deletes a file from the S3 bucket
+func (server *Server) DeleteFileFromS3(filename string) error {
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+	if err != nil {
+		return err
+	}
+	client := s3.NewFromConfig(cfg)
+	return server.deleteFileFromS3WithClient(filename, client)
+}
+
+// deleteFileFromS3WithClient allows injection of a mock client for testing
+func (server *Server) deleteFileFromS3WithClient(filename string, client interface {
+	DeleteObject(ctx context.Context, input *s3.DeleteObjectInput, opts ...func(*s3.Options)) (*s3.DeleteObjectOutput, error)
+}) error {
+	_, err := client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: &server.s3bucket,
+		Key:    &filename,
+	})
+	return err
+}
 
 func (server *Server) DownloadFileFromS3(filename string) (string, error) {
 	/* sess, err := session.NewSession(server.aws)
