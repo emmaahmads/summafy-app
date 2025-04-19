@@ -30,7 +30,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 	user, err := server.store.Queries.GetUser(context.Background(), username_str)
 	if err != nil {
 		util.MyGinLogger("Error fetching user:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -43,29 +43,35 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 	if contentType == "multipart/form-data" {
 		if err := c.Request.ParseMultipartForm(32 << 20); err != nil {
 			util.MyGinLogger("Error parsing form body:", err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid form data"})
 			return
 		}
 	} else {
 		util.MyGinLogger("Unsupported Content-Type")
-		c.JSON(http.StatusUnsupportedMediaType, gin.H{"error": "Unsupported Content-Type"})
+		c.JSON(http.StatusUnsupportedMediaType, gin.H{"error": "unsupported content-type"})
 		return
 	}
 
 	file, header, err := c.Request.FormFile("files")
 	if err != nil {
 		util.MyGinLogger("Error retrieving file from request:", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid file upload"})
 		return
 	}
 	defer file.Close()
+
+	// Validate file name (basic check)
+	if header.Filename == "" || strings.Contains(header.Filename, "..") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid file name"})
+		return
+	}
 
 	// Create a new file in the local filesystem
 	filePath := filepath.Join("uploads", header.Filename)
 	dst, err := os.Create(filePath)
 	if err != nil {
 		util.MyGinLogger("Error creating file:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	defer dst.Close()
@@ -73,14 +79,14 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 	// Copy the uploaded file to the destination file
 	if _, err := io.Copy(dst, file); err != nil {
 		util.MyGinLogger("Error saving file:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
 	local_file, err := os.Open(filePath)
 	if err != nil {
 		util.MyGinLogger("Error opening local file:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -88,7 +94,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 	uploaded_file, err := server.UploadFileToS3("./upload/", local_file)
 	if err != nil {
 		util.MyGinLogger("Error uploading file to S3:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -107,7 +113,7 @@ func (server *Server) HandlerUploadDoc(c *gin.Context) {
 
 	if err != nil {
 		util.MyGinLogger("Error creating new document transaction:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

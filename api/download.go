@@ -24,13 +24,13 @@ type getDocFilenameRequest struct {
 func (server *Server) HandlerDownloadDoc(c *gin.Context) {
 	var req getDocFilenameRequest
 	if err := c.ShouldBindUri(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 	util.MyGinLogger(req.Filename)
 	_, err := server.DownloadFileFromS3(req.Filename)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

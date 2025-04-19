@@ -18,7 +18,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			user	body		signupInput	true	"signup input"
-//	@Success		200		{object}	signupOutput
+//	@Success		201		{object}	signupOutput
 //	@Router			/signup [post]
 func (server *Server) HandlerSignup(c *gin.Context) {
 	var userInput struct {
@@ -29,20 +29,20 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(401, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		util.MyGinLogger(err.Error())
 		return
 	}
 
 	if userInput.Password != userInput.ConfirmPassword {
-		c.JSON(402, gin.H{"error": "Passwords do not match"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
 		util.MyGinLogger("Passwords do not match")
 		return
 	}
 
 	hashedPassword, err := util.HashPassword(userInput.Password)
 	if err != nil {
-		c.JSON(501, gin.H{"error": "Failed to hash password"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -56,18 +56,18 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 	user, err := server.store.CreateUser(c, arg)
 	if err != nil {
 		if err.Error() == "pq: duplicate key value violates unique constraint \"users_username_key\"" {
-			c.JSON(400, gin.H{"error": "Username already exists"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
 			return
 		}
-		c.JSON(500, gin.H{"error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	token, err := server.generateJWT(user.Username)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	// Set JWT as HttpOnly cookie
 	c.SetCookie("session_token", token, 86400, "/", "", !util.IsDevelopment, true)
-	c.JSON(201, gin.H{"status": true, "user": user})
+	c.JSON(http.StatusCreated, gin.H{"status": true, "user": user})
 }
