@@ -1,6 +1,8 @@
 package api
 
 import (
+	"os"
+	"strings"
 	"time"
 
 	db "github.com/emmaahmads/summafy/db/sqlc"
@@ -28,8 +30,15 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 	r.Use(gin.Logger())
 	// Set Access-Control-Allow-Origin header
 	// Configure CORS
+	corsOrigins := os.Getenv("CORS_ORIGINS")
+	var allowOrigins []string
+	if corsOrigins != "" {
+		allowOrigins = strings.Split(corsOrigins, ",")
+	} else {
+		allowOrigins = []string{"http://localhost:8081"} // default for dev
+	}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8081"}, /* TODO - Use env var in production for container bridged networking */
+		AllowOrigins:     allowOrigins, // Use env var in production
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
