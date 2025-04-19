@@ -1,13 +1,11 @@
+//go:build ignore
+// +build ignore
+
 // All handler tests are commented out for now, ready to be re-enabled after merge.
 
-/*
 package api
 
 import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -77,4 +75,3 @@ func TestHandlerWebSocket(t *testing.T) {
 	r := setupRouter()
 	// TODO: Add handler, mock store, and test cases
 }
-*/
