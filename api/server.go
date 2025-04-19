@@ -56,6 +56,9 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		c.JSON(200, gin.H{"success": true, "message": "logged out"})
 	})
 
+	// WebSocket endpoint for ping mechanism
+	r.GET("/ws", server.HandlerWebSocket)
+	
 	api := r.Group("/api/v1")
 	api.Use(server.middlewareAuth())
 	{
@@ -64,6 +67,10 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		api.POST("/upload", server.HandlerUploadDoc)
 		api.GET("/download/:filename", server.HandlerDownloadDoc)
 		api.POST("/notification", server.HandlerNotification)
+		// HTTP keepalive endpoint
+		api.GET("/keepalive", server.HandlerKeepAlive)
+		// New: Delete file from S3
+		api.DELETE("/delete/:filename", server.HandlerDeleteFileFromS3)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -73,4 +80,20 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
+}
+
+// HandlerDeleteFileFromS3 handles file deletion from S3
+func (server *Server) HandlerDeleteFileFromS3(c *gin.Context) {
+	filename := c.Param("filename")
+	if filename == "" {
+		c.JSON(400, gin.H{"error": "filename required"})
+		return
+	}
+	// Optional: Check user owns the file here (not implemented)
+	err := server.DeleteFileFromS3(filename)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"message": "file deleted", "filename": filename})
 }
