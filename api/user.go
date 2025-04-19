@@ -68,6 +68,6 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 		return
 	}
 	// Set JWT as HttpOnly cookie
-	c.SetCookie("session_token", token, 86400, "/", "", false, true)
+	c.SetCookie("session_token", token, 86400, "/", "", !util.IsDevelopment(), true)
 	c.JSON(201, gin.H{"status": true, "user": user})
 }

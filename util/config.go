@@ -53,3 +53,8 @@ func LoadConfigApp(path string) (config AppConfig, err error) {
 	fmt.Println(config.DBUrl)
 	return
 }
+
+func IsDevelopment() bool {
+	// Check environment variable or other configuration
+	return os.Getenv("APP_ENV") != "production"
+}

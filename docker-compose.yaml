@@ -32,7 +32,6 @@ services:
     # depends_on:
     #   - postgres
     environment:
-    environment:
       DATABASE_URL: ${DB_URL}
       CORS_ORIGINS: "http://localhost:8081"
     networks:
