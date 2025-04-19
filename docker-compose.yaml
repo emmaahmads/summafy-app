@@ -32,7 +32,8 @@ services:
     # depends_on:
     #   - postgres
     environment:
-      DATABASE_URL: "postgresql://emma:happy@172.17.0.2:5434/summafy?sslmode=disable"
+environment:
+      DATABASE_URL: ${DB_URL}
       CORS_ORIGINS: "http://localhost:8081"
     networks:
       - summafy-network
