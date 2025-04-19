@@ -46,9 +46,16 @@ jobs:
         go install github.com/pressly/goose/v3/cmd/goose@latest
         which goose
 
+    - name: Install govulncheck
+      run: |
+        go install golang.org/x/vuln/cmd/govulncheck@latest
+        which govulncheck
+
+    - name: Run govulncheck
+      run: govulncheck ./...
+
     - name: Run migrations
       run: make migrateup
 
     - name: Test
       run: go test -v -cover -short ./...
-
