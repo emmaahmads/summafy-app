@@ -36,7 +36,7 @@ func (server *Server) generateJWT(username string) (string, error) {
 
 func (server *Server) middlewareAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		claims, err := server.GetClaimsFromJWT(ctx.Request.Header)
+		claims, err := server.GetClaimsFromCookie(ctx)
 		if err != nil || claims.ExpiresAt < time.Now().Unix() {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			return
@@ -52,6 +52,30 @@ func (server *Server) middlewareAuth() gin.HandlerFunc {
 	}
 }
 
+// Extract JWT from HttpOnly cookie
+func (server *Server) GetClaimsFromCookie(ctx *gin.Context) (*Claims, error) {
+	var jwtKey = []byte(server.secretKey)
+	claims := &Claims{}
+	tokenStr, err := ctx.Cookie("session_token")
+	if err != nil {
+		return nil, errors.New("missing session cookie")
+	}
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			return nil, errors.New("invalid token signature")
+		}
+		return nil, errors.New("could not parse token")
+	}
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+	return claims, nil
+}
+
+// Deprecated: for backward compatibility with header-based auth
 func (server *Server) GetClaimsFromJWT(headers http.Header) (*Claims, error) {
 	var jwtKey = []byte(server.secretKey)
 	claims := &Claims{}
