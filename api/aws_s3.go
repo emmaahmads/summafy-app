@@ -103,6 +103,7 @@ func (server *Server) UploadFileToS3(fileDir string, file *os.File) (s3ObjectUpl
 func (server *Server) DeleteFileFromS3(filename string) error {
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
+		util.MyGinLogger("Error loading AWS config:", err.Error())
 		return err
 	}
 	client := s3.NewFromConfig(cfg)

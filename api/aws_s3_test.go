@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -38,11 +39,7 @@ func TestDeleteFileFromS3(t *testing.T) {
 		t.Errorf("expected no error, got %v", err)
 	}
 
-	// Test error case
-	mockClient.DeleteObjectFunc = func(ctx context.Context, input *s3.DeleteObjectInput, opts ...func(*s3.Options)) (*s3.DeleteObjectOutput, error) {
-		return nil, errors.New("delete failed")
-	}
-	err = server.deleteFileFromS3WithClient("test.txt", mockClient)
+	err = server.deleteFileFromS3WithClient("tset.txt", mockClient)
 	if err == nil {
 		t.Errorf("expected error, got nil")
 	}

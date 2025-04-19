@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"slices"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -13,8 +15,12 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		// Allow all origins for now, in production you might want to restrict this
-		return true
+		// Validate origins
+		origin := r.Header.Get("Origin")
+		allowedOrigins := []string{"http://localhost:8081"}
+
+		// In production, use environment variables instead of hardcoded values
+		return slices.Contains(allowedOrigins, origin)
 	},
 }
 
@@ -28,10 +34,18 @@ func (server *Server) HandlerWebSocket(c *gin.Context) {
 	}
 	defer conn.Close()
 
+	done := make(chan struct{})
+	defer close(done)
+
 	// Set read deadline to detect disconnections
-	conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+	if err := conn.SetReadDeadline(time.Now().Add(60 * time.Second)); err != nil {
+		log.Printf("Failed to set read deadline: %v", err)
+		return
+	}
 	conn.SetPongHandler(func(string) error {
-		conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		if err := conn.SetReadDeadline(time.Now().Add(60 * time.Second)); err != nil {
+			log.Printf("Failed to extend read deadline: %v", err)
+		}
 		return nil
 	})
 
@@ -47,6 +61,8 @@ func (server *Server) HandlerWebSocket(c *gin.Context) {
 					log.Printf("Error sending ping: %v", err)
 					return
 				}
+			case <-done:
+				return
 			}
 		}
 	}()
@@ -60,7 +76,7 @@ func (server *Server) HandlerWebSocket(c *gin.Context) {
 			}
 			break
 		}
-		
+
 		// If we receive any message, just log it for debugging
 		log.Printf("Received message: %s", message)
 	}
@@ -69,13 +85,5 @@ func (server *Server) HandlerWebSocket(c *gin.Context) {
 // HandlerKeepAlive is an HTTP endpoint for keepalive checks
 // This is used as a fallback when WebSocket connection fails
 func (server *Server) HandlerKeepAlive(c *gin.Context) {
-	// Verify the token is valid
-	claims, err := server.GetClaimsFromJWT(c.Request.Header)
-	if err != nil || claims.ExpiresAt < time.Now().Unix() {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
-		return
-	}
-
-	// Return a simple OK response
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
