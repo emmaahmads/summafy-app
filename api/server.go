@@ -48,8 +48,12 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 
 	r.POST("/signup", server.HandlerSignup)
 	r.POST("/login", server.HandlerLogin)
-	r.GET("/logout", func(c *gin.Context) {
-		// placeholder
+	// Use POST method to be consistent with REST principles since logout modifies server state
+	// GET method could lead to unintentional logout by browser operations
+	r.POST("/logout", func(c *gin.Context) {
+		// Clear the session cookie
+		c.SetCookie("session_token", "", -1, "/", "", false, true)
+		c.JSON(200, gin.H{"success": true, "message": "logged out"})
 	})
 
 	api := r.Group("/api/v1")

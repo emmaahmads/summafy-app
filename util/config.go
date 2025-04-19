@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var IsDevelopment bool = false
+
 type AppConfig struct {
 	SecretKey      string `mapstructure:"SECRET_KEY"`
 	ServerAddress  string `mapstructure:"SERVER_ADDRESS"`
@@ -50,6 +52,6 @@ func LoadConfigApp(path string) (config AppConfig, err error) {
 	if err != nil {
 		return
 	}
-	fmt.Println(config.DBUrl)
+	IsDevelopment = config.ProductionMode != "true"
 	return
 }

@@ -67,6 +67,7 @@ func (server *Server) HandlerSignup(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return
 	}
-
-	c.JSON(201, gin.H{"status": true, "user": user, "token": token})
+	// Set JWT as HttpOnly cookie
+	c.SetCookie("session_token", token, 86400, "/", "", !util.IsDevelopment, true)
+	c.JSON(201, gin.H{"status": true, "user": user})
 }
