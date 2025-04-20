@@ -37,12 +37,12 @@ func (server *Server) HandlerViewDocumentsUploaded(c *gin.Context) {
 	var req getDocIdRequest
 	var document []DocumentView
 	if err := c.ShouldBindUri(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 	doc, err := server.store.Queries.GetDocument(context.Background(), int64(req.DocId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	sum, _ := server.store.Queries.GetSummary(context.Background(), doc.ID)

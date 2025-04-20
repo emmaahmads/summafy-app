@@ -27,7 +27,7 @@ func (server *Server) HandlerLogin(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
 		util.MyGinLogger(err.Error())
-		c.JSON(401, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 
@@ -35,20 +35,20 @@ func (server *Server) HandlerLogin(c *gin.Context) {
 	user, err := server.store.GetUser(c, userInput.Username)
 	if err != nil {
 		util.MyGinLogger(err.Error())
-		c.JSON(402, gin.H{"error": "Invalid username or password"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
 	util.MyGinLogger(userInput.Password, user.HashedPassword)
 	// Compare the provided password with the stored hashed password
 	if err := util.CheckPassword(userInput.Password, user.HashedPassword); err != nil {
 		util.MyGinLogger(err.Error())
-		c.JSON(403, gin.H{"error": "Invalid username or password"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
 
 	token, err := server.generateJWT(user.Username)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	// Set JWT as HttpOnly cookie

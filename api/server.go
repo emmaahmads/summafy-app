@@ -28,6 +28,23 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 
 	r := gin.Default()
 	r.Use(gin.Logger())
+	// globalErrorHandler is a Gin middleware to catch all panics and errors, returning a generic message to clients
+	r.Use(func(c *gin.Context) {
+		defer func() {
+			if rec := recover(); rec != nil {
+				c.JSON(500, gin.H{"error": "internal server error"})
+				c.Abort()
+			}
+		}()
+		c.Next()
+		// Handle errors set via c.Error
+		if len(c.Errors) > 0 {
+			// Log the actual error(s) if needed
+			// log.Println("errors:", c.Errors)
+			c.JSON(500, gin.H{"error": "internal server error"})
+			c.Abort()
+		}
+	})
 	// Set Access-Control-Allow-Origin header
 	// Configure CORS
 	corsOrigins := os.Getenv("CORS_ORIGINS")
@@ -58,7 +75,7 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 
 	// WebSocket endpoint for ping mechanism
 	r.GET("/ws", server.HandlerWebSocket)
-	
+
 	api := r.Group("/api/v1")
 	api.Use(server.middlewareAuth())
 	{
@@ -85,14 +102,14 @@ func (server *Server) Start(address string) error {
 // HandlerDeleteFileFromS3 handles file deletion from S3
 func (server *Server) HandlerDeleteFileFromS3(c *gin.Context) {
 	filename := c.Param("filename")
-	if filename == "" {
-		c.JSON(400, gin.H{"error": "filename required"})
+	if filename == "" || strings.Contains(filename, "..") {
+		c.JSON(400, gin.H{"error": "invalid filename"})
 		return
 	}
 	// Optional: Check user owns the file here (not implemented)
 	err := server.DeleteFileFromS3(filename)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(200, gin.H{"message": "file deleted", "filename": filename})

@@ -44,7 +44,8 @@ func (server *Server) HandlerDashboard(c *gin.Context) {
 		4: "downloaded"}
 	activities, err := server.store.Queries.GetAllActivities(context.Background())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
 	}
 
 	//  TODO - add a new table that consists of existing documents on the S3 bucket
@@ -60,7 +61,7 @@ func (server *Server) HandlerDashboard(c *gin.Context) {
 		user, _ := server.store.Queries.GetUser(context.Background(), activities[a].Username)
 		doc, err := server.store.Queries.GetDocument(context.Background(), activities[a].DocumentID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 			return
 		}
 		act := dashboard_history{

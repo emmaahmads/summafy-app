@@ -160,13 +160,13 @@ func (server *Server) DownloadFileFromS3(filename string) (string, error) {
 
 func (server *Server) HandlerNotification(c *gin.Context) {
 	type Notification struct {
-		Name    string `json:"filename"`
-		Summary string `json:"summary"`
+		Name    string `json:"filename" binding:"required"`
+		Summary string `json:"summary" binding:"required"`
 	}
 	var notification Notification
 
 	if err := c.ShouldBindJSON(&notification); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 
