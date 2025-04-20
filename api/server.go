@@ -39,6 +39,8 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 		c.Next()
 		// Handle errors set via c.Error
 		if len(c.Errors) > 0 {
+			// Log the actual error(s) if needed
+			// log.Println("errors:", c.Errors)
 			c.JSON(500, gin.H{"error": "internal server error"})
 			c.Abort()
 		}
@@ -73,7 +75,7 @@ func NewServer(store db.Store, s3bucket string, secretkey string) *Server {
 
 	// WebSocket endpoint for ping mechanism
 	r.GET("/ws", server.HandlerWebSocket)
-	
+
 	api := r.Group("/api/v1")
 	api.Use(server.middlewareAuth())
 	{
